@@ -5,6 +5,14 @@ from scipy import stats
 from IPython import embed
 import statistics
 from scipy.optimize import curve_fit
+import os as os 
+from sklearn.linear_model import LogisticRegression
+
+curr_filepath = os.getcwd()
+fig_filepath_base = os.path.dirname(curr_filepath)
+fig_filepath= os.path.join(fig_filepath_base, 'figures') 
+if not os.path.exists(fig_filepath):
+    os.mkdir(fig_filepath)
 
 # variables
 threshold = list(repeat(0.80, 18))
@@ -55,10 +63,10 @@ a04_trials = np.array([15, 14, 13, 25, 12, 16, 7, 15, 15, 15, 15, 15, 15, 15, 15
 a05_corr = np.array([2, 6, 5, 7, 5, 7, 4, 9, 7, 9, 9, 7, 8, 2, 6, 5, 3, 5, 6, 12, 8, 10, 13])
 a05_trials = np.array([9, 13, 13, 13, 10, 13, 7, 15, 11, 15, 15, 14, 13, 6, 12, 10, 5, 14, 14, 15, 12, 15, 15])
 
-a06_corr = np.array([1, 6, 7, 16, 10, 4, 10, 9, 8, 11, 8, 11, 9, 10, 9, 14, 9, 11, 13, 13, 12, 12, 12])
-a06_trials = np.array([1, 14, 13, 25, 17, 7, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
+a06_corr = np.array([6, 6, 7, 16, 10, 4, 10, 9, 8, 11, 8, 11, 9, 10, 9, 14, 9, 11, 13, 13, 12, 12, 12])
+a06_trials = np.array([14, 14, 13, 25, 17, 7, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
 
-
+names = ['a01', 'a02','a03','a04','a05','a06']
 
 # convert to percent
 correct_choices = [a01_corr, a02_corr, a03_corr, a04_corr, a05_corr, a06_corr]
@@ -72,38 +80,25 @@ for choice, trial in zip(correct_choices, all_trials):
 print(all_percentages)
 
 # statistics
+day_1 = []
+day_16 = []
 for percentage in all_percentages:
-    print(np.corrcoef(time, percentage))  # Pearson Correlation
-    print(stats.spearmanr(time, percentage))  # Spearman Correlation   TIME CORRECT?! want int instead of list
     print(stats.shapiro(percentage))  # Shapiro-Wilk-Test
-
-
-
-
-"""
-# Shapiro-Wilk-Test
-print('albi01', stats.shapiro(a01_corr))
-print('albi02', stats.shapiro(a02_corr))
-print('albi03', stats.shapiro(a03_corr))
-print('albi04', stats.shapiro(a04_corr))
-print('albi05', stats.shapiro(a05_corr))
-print('albi06', stats.shapiro(a06_corr))
-"""
-
-"""
-# T-Test
-print('albi01', stats.ttest_rel(m-wert, steigung von 0))
-print('albi02', stats.ttest_rel(a02_corr, time))
-print('albi03', stats.ttest_rel(a03_corr, time))
-print('albi04', stats.ttest_rel(a04_corr, time))
-print('albi05', stats.ttest_rel(a05_corr, time))
-print('albi06', stats.ttest_rel(a06_corr, time))
-"""
+    print(np.corrcoef(time, percentage))  # Pearson Correlation
+    print(stats.spearmanr(time, percentage, axis=1))  # Spearman Correlation   TIME CORRECT?! want int instead of list
+    day_1.append(percentage[0])
+    day_16.append(percentage[-1])
+print(stats.ttest_rel(day_1, day_16))
 
 # plotting
 # all plots in one graphic
 fig, ax = plt.subplots()
 #ax.set_title('albi06')
+
+E_xy_sum = []
+E_x_sum = []
+E_y_sum = []
+E_x_2_sum = []
 
 for percentage in all_percentages:
     ax.plot(time, percentage, "lightgrey", linewidth=0.8)
@@ -126,10 +121,7 @@ for percentage in all_percentages:
     #print('albi01', stats.ttest_rel(m, b))
 
     # summed axes
-    E_xy_sum = []
-    E_x_sum = []
-    E_y_sum = []
-    E_x_2_sum = []
+
 
     E_x_sum.append(E_x)
     E_y_sum.append(E_y)
@@ -162,11 +154,11 @@ plt.yticks([0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
 plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]) # for all data
 
 
-plt.show()
+#plt.show()
 plt.close()
 
 # each fish got its own plot
-for percentage in all_percentages:
+for percentage, name in zip(all_percentages, names):
     x = time_array
     y = percentage
     fig, ax = plt.subplots()
@@ -211,5 +203,14 @@ for percentage in all_percentages:
     ax.plot(time, m*time_array+b)
     print('y =', m, 'x +', b)
 
-    plt.show()
+    plt.savefig(os.path.join(fig_filepath, '%s.png' %name), dpi=400)
     plt.close()
+
+
+for percentage, name in zip(all_percentages, names):
+    x_axis = np.arange(len(time)).reshape(-1, 1)
+    bool_trial = percentage>0.7
+    y_axis = bool_trial*1
+
+model = LogisticRegression(solver='liblinear', random_state=0)
+# finish logistic regression
