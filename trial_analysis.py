@@ -5,12 +5,12 @@ from scipy import stats
 from IPython import embed
 import statistics
 from scipy.optimize import curve_fit
-import os as os 
+import os as os
 from sklearn.linear_model import LogisticRegression
 
 curr_filepath = os.getcwd()
 fig_filepath_base = os.path.dirname(curr_filepath)
-fig_filepath= os.path.join(fig_filepath_base, 'figures') 
+fig_filepath = os.path.join(fig_filepath_base, 'figures')
 if not os.path.exists(fig_filepath):
     os.mkdir(fig_filepath)
 
@@ -66,7 +66,7 @@ a05_trials = np.array([9, 13, 13, 13, 10, 13, 7, 15, 11, 15, 15, 14, 13, 6, 12, 
 a06_corr = np.array([6, 6, 7, 16, 10, 4, 10, 9, 8, 11, 8, 11, 9, 10, 9, 14, 9, 11, 13, 13, 12, 12, 12])
 a06_trials = np.array([14, 14, 13, 25, 17, 7, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
 
-names = ['a01', 'a02','a03','a04','a05','a06']
+names = ['a01', 'a02', 'a03', 'a04', 'a05', 'a06']
 
 # convert to percent
 correct_choices = [a01_corr, a02_corr, a03_corr, a04_corr, a05_corr, a06_corr]
@@ -75,7 +75,7 @@ all_trials = [a01_trials, a02_trials, a03_trials, a04_trials, a05_trials, a06_tr
 all_percentages = []
 
 for choice, trial in zip(correct_choices, all_trials):
-    all_percentages.append((choice/trial))
+    all_percentages.append((choice / trial))
 
 print(all_percentages)
 
@@ -93,7 +93,7 @@ print(stats.ttest_rel(day_1, day_16))
 # plotting
 # all plots in one graphic
 fig, ax = plt.subplots()
-#ax.set_title('albi06')
+# ax.set_title('albi06')
 
 E_xy_sum = []
 E_x_sum = []
@@ -104,7 +104,7 @@ for percentage in all_percentages:
     ax.plot(time, percentage, "lightgrey", linewidth=0.8)
     x = time_array
     N = 16
-    N = 23 # for all data
+    N = 23  # for all data
 
     # linear regression (handmade)
     y = percentage
@@ -118,10 +118,9 @@ for percentage in all_percentages:
     # print('y =', m, 'x +', b)
 
     # t-test?
-    #print('albi01', stats.ttest_rel(m, b))
+    # print('albi01', stats.ttest_rel(m, b))
 
     # summed axes
-
 
     E_x_sum.append(E_x)
     E_y_sum.append(E_y)
@@ -150,11 +149,10 @@ ax.set_ylim([0, 1.05])
 # adjusting the steps on the axes
 
 plt.yticks([0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
-#plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
-plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]) # for all data
+# plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])  # for all data
 
-
-#plt.show()
+# plt.show()
 plt.close()
 
 # each fish got its own plot
@@ -164,8 +162,8 @@ for percentage, name in zip(all_percentages, names):
     fig, ax = plt.subplots()
     ax.plot(time, percentage)
 
-    #ax.plot(range(0, 18), threshold, '--', linewidth=0.8)  # 80% Grenze
-    #ax.plot(range(0, 18), midline, '--', linewidth=0.8)  # 50% Grenze
+    # ax.plot(range(0, 18), threshold, '--', linewidth=0.8)  # 80% Grenze
+    # ax.plot(range(0, 18), midline, '--', linewidth=0.8)  # 50% Grenze
     # for all data
     ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
     ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
@@ -179,19 +177,19 @@ for percentage, name in zip(all_percentages, names):
     # adjusting the steps on the axes
 
     plt.yticks([0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
-    #plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
-    plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]) # for all data
+    # plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+    plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])  # for all data
 
     # regression line (professional)
 
-    #m_1, b_1 = np.polyfit(x, y, 1)
-    #ax.plot(x, m_1*time_array + b_1)
+    # m_1, b_1 = np.polyfit(x, y, 1)
+    # ax.plot(x, m_1*time_array + b_1)
 
     # linear regression (handmade)
 
     x = time_array
     N = 16
-    N = 23 # for all data
+    N = 23  # for all data
 
     y = percentage
     E_xy = sum(time_array * percentage)
@@ -200,17 +198,24 @@ for percentage, name in zip(all_percentages, names):
     E_x_2 = sum(x * x)
     m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
     b = (E_y - (m * E_x)) / N
-    ax.plot(time, m*time_array+b)
+    ax.plot(time, m * time_array + b)
     print('y =', m, 'x +', b)
 
-    plt.savefig(os.path.join(fig_filepath, '%s.png' %name), dpi=400)
+    plt.savefig(os.path.join(fig_filepath, '%s.png' % name), dpi=400)
     plt.close()
 
-
+# logistic regression
 for percentage, name in zip(all_percentages, names):
     x_axis = np.arange(len(time)).reshape(-1, 1)
-    bool_trial = percentage>0.7
-    y_axis = bool_trial*1
+    bool_trial = percentage > 0.7
+    y_axis = bool_trial * 1
 
-model = LogisticRegression(solver='liblinear', random_state=0)
-# finish logistic regression
+    model = LogisticRegression(solver='liblinear', random_state=0)
+    model.fit(x_axis, y_axis)
+    model.predict_proba(x_axis)  # shows performance of the model
+    model.predict(x_axis)  # shows the predictions
+    print(model.score(x_axis, y_axis))  # shows the accuracy
+
+    plt.scatter(x_axis, y_axis)
+    plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
+    plt.show()
