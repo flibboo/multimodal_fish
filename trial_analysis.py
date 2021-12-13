@@ -164,6 +164,7 @@ for percentage, name in zip(all_percentages, names):
 
     # ax.plot(range(0, 18), threshold, '--', linewidth=0.8)  # 80% Grenze
     # ax.plot(range(0, 18), midline, '--', linewidth=0.8)  # 50% Grenze
+
     # for all data
     ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
     ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
@@ -210,7 +211,12 @@ for percentage, name in zip(all_percentages, names):
     bool_trial = percentage > 0.7
     y_axis = bool_trial * 1
 
-    model = LogisticRegression(solver='liblinear', random_state=0)
+    #model = LogisticRegression(solver='liblinear', random_state=0)
+    model = LogisticRegression(C=10.0, class_weight=None, dual=False, fit_intercept=True,
+                       intercept_scaling = 1, l1_ratio=None, max_iter=100,
+                       multi_class = 'ovr', n_jobs=None, penalty='l2',
+                       random_state = 0, solver='liblinear', tol=0.0001, verbose=0,
+                       warm_start = False)
     model.fit(x_axis, y_axis)
     model.predict_proba(x_axis)  # shows performance of the model
     model.predict(x_axis)  # shows the predictions
