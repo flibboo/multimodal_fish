@@ -7,6 +7,8 @@ import statistics
 from scipy.optimize import curve_fit
 import os as os
 from sklearn.linear_model import LogisticRegression
+import pandas as pd
+import openpyxl
 
 curr_filepath = os.getcwd()
 fig_filepath_base = os.path.dirname(curr_filepath)
@@ -14,6 +16,77 @@ fig_filepath = os.path.join(fig_filepath_base, 'figures')
 if not os.path.exists(fig_filepath):
     os.mkdir(fig_filepath)
 
+# excel to pandas
+
+training = "Training_Messreihe.xlsx"
+df_1 = pd.read_excel(training, sheet_name="25.08.2021", engine='openpyxl')
+df_2 = pd.read_excel(training, sheet_name=[1])
+df = pd.read_excel(training, sheet_name=None)
+count = 0
+for i in df:
+    df_run = pd.read_excel(training, sheet_name=[count], engine='openpyxl')
+    if "2020albi01" in df_run:
+        albi01 = df_run.loc[df_run["Stimmulus"] == "high", "2020albi01"]  # only takes the ones with high stimuli + the collum from albi01
+        print(albi01)
+        x_a = list(range(0, len(albi01)))
+        plt.scatter(x_a, albi01)
+        plt.show()
+    if "2020albi04" in df_run:
+        albi04 = df_run.loc[df_run["Stimmulus"] == "high", "2020albi04"]
+        print(albi04)
+        x_a = list(range(0, len(albi04)))
+        plt.scatter(x_a, albi04)
+        plt.show()
+    print(df_run)
+    embed()
+    quit()
+    count += 1
+
+"""
+# Albi01
+if "2020albi01" in df:
+    albi01 = df.loc[df["Stimmulus"] == "high", "2020albi01"] # only takes the ones with high stimuli + the collum from albi01
+    print(albi01)
+    x_a = list(range(0, len(albi01)))
+    plt.scatter(x_a, albi01)
+    plt.show()
+
+# Albi02
+if "2020albi02" in df:
+    albi02 = df.loc[df["Stimmulus"] == "high", "2020albi02"]
+    print(albi02)
+    x_a = list(range(0, len(albi02)))
+    plt.scatter(x_a, albi02)
+    plt.show()
+
+# Albi03
+if "2020albi03" in df:
+    albi03 = df.loc[df["Stimmulus"] == "high", "2020albi03"]
+    print(albi03)
+    x_a = list(range(0, len(albi03)))
+    plt.scatter(x_a, albi03)
+    plt.show()
+
+# Albi04
+if "2020albi04" in df:
+    albi04 = df.loc[df["Stimmulus"] == "high", "2020albi04"]
+    print(albi04)
+    x_a = list(range(0, len(albi04)))
+    plt.scatter(x_a, albi04)
+    plt.show()
+
+# Albi05
+if "2020albi05" in df:
+    albi05 = df.loc[df["Stimmulus"] == "high", "2020albi05"]
+    df_spec = albi05[df["2020albi05"] != '-']
+    print(albi05)
+    print(df_spec)
+    x_a = list(range(0, len(df_spec)))
+
+    plt.scatter(x_a, df_spec)
+    plt.show()
+"""
+"""
 # variables
 threshold = list(repeat(0.80, 18))
 midline = list(repeat(0.50, 18))
@@ -225,3 +298,4 @@ for percentage, name in zip(all_percentages, names):
     plt.scatter(x_axis, y_axis)
     plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
     plt.show()
+"""
