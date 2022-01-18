@@ -10,6 +10,11 @@ from sklearn.linear_model import LogisticRegression
 import pandas as pd
 import openpyxl
 
+# This portion of the code opens the xls file and creates a Pandas array with each fish getting a column and each row representing a day. 
+# From each column, we then extract a numpy array, flatten it, and get a big array with all the trials for one fish over all the days. 
+# This is then used in the logistic regression
+
+
 curr_filepath = os.getcwd()
 fig_filepath_base = os.path.dirname(curr_filepath)
 fig_filepath = os.path.join(fig_filepath_base, 'figures')
@@ -50,20 +55,8 @@ for fish in all_fish:
     curr_fish_array = np.array(curr_fish)
     curr_fish_flattened_array = np.concatenate(curr_fish_array).ravel()
     # At this point you can do the Logistic Regression
-import numpy as np
-from itertools import repeat
-from scipy import stats
-from IPython import embed
-import statistics
-from scipy.optimize import curve_fit
-import os as os 
-from sklearn.linear_model import LogisticRegression
 
-curr_filepath = os.getcwd()
-fig_filepath_base = os.path.dirname(curr_filepath)
-fig_filepath= os.path.join(fig_filepath_base, 'figures') 
-if not os.path.exists(fig_filepath):
-    os.mkdir(fig_filepath)
+# Not sure what the code below does anymore. This needs to be cleaned up and put into separate scripts! 
 
 # variables
 threshold = list(repeat(0.80, 18))
