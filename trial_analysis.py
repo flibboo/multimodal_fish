@@ -161,7 +161,7 @@ for percentage in all_percentages:
     print(stats.spearmanr(time, percentage, axis=1))  # Spearman Correlation   TIME CORRECT?! want int instead of list
     day_1.append(percentage[0])
     day_16.append(percentage[-1])
-print(stats.ttest_rel(day_1, day_16))
+print(stats.ttest_rel(day_1, day_16)) # nicht zwingend notwendig, da nicht demonstrativ
 
 # plotting
 # all plots in one graphic
