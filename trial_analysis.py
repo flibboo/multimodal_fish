@@ -10,9 +10,11 @@ from sklearn.linear_model import LogisticRegression
 import pandas as pd
 import openpyxl
 
+
 # This portion of the code opens the xls file and creates a Pandas array with each fish getting a column and each row representing a day. 
 # From each column, we then extract a numpy array, flatten it, and get a big array with all the trials for one fish over all the days. 
 # This is then used in the logistic regression
+
 
 
 curr_filepath = os.getcwd()
@@ -25,6 +27,7 @@ if not os.path.exists(fig_filepath):
 
 training = "Training_Messreihe.xlsx"
 df_1 = pd.read_excel(training, sheet_name="25.08.2021", engine='openpyxl')
+
 df_2 = pd.read_excel(training, sheet_name=[1], engine='openpyxl')
 df = pd.read_excel(training, sheet_name=None, engine='openpyxl')
 
@@ -57,6 +60,74 @@ for fish in all_fish:
     # At this point you can do the Logistic Regression
 
 # Not sure what the code below does anymore. This needs to be cleaned up and put into separate scripts! 
+
+df_2 = pd.read_excel(training, sheet_name=[1])
+df = pd.read_excel(training, sheet_name=None)
+count = 0
+for i in df:
+    df_run = pd.read_excel(training, sheet_name=[count], engine='openpyxl')
+    if "2020albi01" in df_run:
+        albi01 = df_run.loc[df_run["Stimmulus"] == "high", "2020albi01"]  # only takes the ones with high stimuli + the collum from albi01
+        print(albi01)
+        x_a = list(range(0, len(albi01)))
+        plt.scatter(x_a, albi01)
+        plt.show()
+    if "2020albi04" in df_run:
+        albi04 = df_run.loc[df_run["Stimmulus"] == "high", "2020albi04"]
+        print(albi04)
+        x_a = list(range(0, len(albi04)))
+        plt.scatter(x_a, albi04)
+        plt.show()
+    print(df_run)
+    embed()
+    quit()
+    count += 1
+
+"""
+# Albi01
+if "2020albi01" in df:
+    albi01 = df.loc[df["Stimmulus"] == "high", "2020albi01"] # only takes the ones with high stimuli + the collum from albi01
+    print(albi01)
+    x_a = list(range(0, len(albi01)))
+    plt.scatter(x_a, albi01)
+    plt.show()
+
+# Albi02
+if "2020albi02" in df:
+    albi02 = df.loc[df["Stimmulus"] == "high", "2020albi02"]
+    print(albi02)
+    x_a = list(range(0, len(albi02)))
+    plt.scatter(x_a, albi02)
+    plt.show()
+
+# Albi03
+if "2020albi03" in df:
+    albi03 = df.loc[df["Stimmulus"] == "high", "2020albi03"]
+    print(albi03)
+    x_a = list(range(0, len(albi03)))
+    plt.scatter(x_a, albi03)
+    plt.show()
+
+# Albi04
+if "2020albi04" in df:
+    albi04 = df.loc[df["Stimmulus"] == "high", "2020albi04"]
+    print(albi04)
+    x_a = list(range(0, len(albi04)))
+    plt.scatter(x_a, albi04)
+    plt.show()
+
+# Albi05
+if "2020albi05" in df:
+    albi05 = df.loc[df["Stimmulus"] == "high", "2020albi05"]
+    df_spec = albi05[df["2020albi05"] != '-']
+    print(albi05)
+    print(df_spec)
+    x_a = list(range(0, len(df_spec)))
+
+    plt.scatter(x_a, df_spec)
+    plt.show()
+"""
+"""
 
 # variables
 threshold = list(repeat(0.80, 18))
@@ -110,7 +181,7 @@ a05_trials = np.array([9, 13, 13, 13, 10, 13, 7, 15, 11, 15, 15, 14, 13, 6, 12, 
 a06_corr = np.array([6, 6, 7, 16, 10, 4, 10, 9, 8, 11, 8, 11, 9, 10, 9, 14, 9, 11, 13, 13, 12, 12, 12])
 a06_trials = np.array([14, 14, 13, 25, 17, 7, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
 
-names = ['a01', 'a02','a03','a04','a05','a06']
+names = ['a01', 'a02', 'a03', 'a04', 'a05', 'a06']
 
 # convert to percent
 correct_choices = [a01_corr, a02_corr, a03_corr, a04_corr, a05_corr, a06_corr]
@@ -119,7 +190,7 @@ all_trials = [a01_trials, a02_trials, a03_trials, a04_trials, a05_trials, a06_tr
 all_percentages = []
 
 for choice, trial in zip(correct_choices, all_trials):
-    all_percentages.append((choice/trial))
+    all_percentages.append((choice / trial))
 
 print(all_percentages)
 
@@ -137,7 +208,7 @@ print(stats.ttest_rel(day_1, day_16))
 # plotting
 # all plots in one graphic
 fig, ax = plt.subplots()
-#ax.set_title('albi06')
+# ax.set_title('albi06')
 
 E_xy_sum = []
 E_x_sum = []
@@ -148,7 +219,7 @@ for percentage in all_percentages:
     ax.plot(time, percentage, "lightgrey", linewidth=0.8)
     x = time_array
     N = 16
-    N = 23 # for all data
+    N = 23  # for all data
 
     # linear regression (handmade)
     y = percentage
@@ -162,10 +233,9 @@ for percentage in all_percentages:
     # print('y =', m, 'x +', b)
 
     # t-test?
-    #print('albi01', stats.ttest_rel(m, b))
+    # print('albi01', stats.ttest_rel(m, b))
 
     # summed axes
-
 
     E_x_sum.append(E_x)
     E_y_sum.append(E_y)
@@ -194,11 +264,10 @@ ax.set_ylim([0, 1.05])
 # adjusting the steps on the axes
 
 plt.yticks([0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
-#plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
-plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]) # for all data
+# plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])  # for all data
 
-
-#plt.show()
+# plt.show()
 plt.close()
 
 # each fish got its own plot
@@ -208,8 +277,9 @@ for percentage, name in zip(all_percentages, names):
     fig, ax = plt.subplots()
     ax.plot(time, percentage)
 
-    #ax.plot(range(0, 18), threshold, '--', linewidth=0.8)  # 80% Grenze
-    #ax.plot(range(0, 18), midline, '--', linewidth=0.8)  # 50% Grenze
+    # ax.plot(range(0, 18), threshold, '--', linewidth=0.8)  # 80% Grenze
+    # ax.plot(range(0, 18), midline, '--', linewidth=0.8)  # 50% Grenze
+
     # for all data
     ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
     ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
@@ -223,19 +293,19 @@ for percentage, name in zip(all_percentages, names):
     # adjusting the steps on the axes
 
     plt.yticks([0, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00])
-    #plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
-    plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]) # for all data
+    # plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16])
+    plt.xticks([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24])  # for all data
 
     # regression line (professional)
 
-    #m_1, b_1 = np.polyfit(x, y, 1)
-    #ax.plot(x, m_1*time_array + b_1)
+    # m_1, b_1 = np.polyfit(x, y, 1)
+    # ax.plot(x, m_1*time_array + b_1)
 
     # linear regression (handmade)
 
     x = time_array
     N = 16
-    N = 23 # for all data
+    N = 23  # for all data
 
     y = percentage
     E_xy = sum(time_array * percentage)
@@ -244,15 +314,16 @@ for percentage, name in zip(all_percentages, names):
     E_x_2 = sum(x * x)
     m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
     b = (E_y - (m * E_x)) / N
-    ax.plot(time, m*time_array+b)
+    ax.plot(time, m * time_array + b)
     print('y =', m, 'x +', b)
 
-    plt.savefig(os.path.join(fig_filepath, '%s.png' %name), dpi=400)
+    plt.savefig(os.path.join(fig_filepath, '%s.png' % name), dpi=400)
     plt.close()
 
-
+# logistic regression
 for percentage, name in zip(all_percentages, names):
     x_axis = np.arange(len(time)).reshape(-1, 1)
+
     bool_trial = percentage>0.7
     y_axis = bool_trial*1
 
@@ -515,6 +586,7 @@ for percentage, name in zip(all_percentages, names):
 # logistic regression
 for percentage, name in zip(all_percentages, names):
     x_axis = np.arange(len(time)).reshape(-1, 1)
+
     bool_trial = percentage > 0.7
     y_axis = bool_trial * 1
 
