@@ -84,52 +84,6 @@ for i in df:
     count += 1
 
 """
-
-"""
-# Albi01
-if "2020albi01" in df:
-    albi01 = df.loc[df["Stimmulus"] == "high", "2020albi01"] # only takes the ones with high stimuli + the collum from albi01
-    print(albi01)
-    x_a = list(range(0, len(albi01)))
-    plt.scatter(x_a, albi01)
-    plt.show()
-
-# Albi02
-if "2020albi02" in df:
-    albi02 = df.loc[df["Stimmulus"] == "high", "2020albi02"]
-    print(albi02)
-    x_a = list(range(0, len(albi02)))
-    plt.scatter(x_a, albi02)
-    plt.show()
-
-# Albi03
-if "2020albi03" in df:
-    albi03 = df.loc[df["Stimmulus"] == "high", "2020albi03"]
-    print(albi03)
-    x_a = list(range(0, len(albi03)))
-    plt.scatter(x_a, albi03)
-    plt.show()
-
-# Albi04
-if "2020albi04" in df:
-    albi04 = df.loc[df["Stimmulus"] == "high", "2020albi04"]
-    print(albi04)
-    x_a = list(range(0, len(albi04)))
-    plt.scatter(x_a, albi04)
-    plt.show()
-
-# Albi05
-if "2020albi05" in df:
-    albi05 = df.loc[df["Stimmulus"] == "high", "2020albi05"]
-    df_spec = albi05[df["2020albi05"] != '-']
-    print(albi05)
-    print(df_spec)
-    x_a = list(range(0, len(df_spec)))
-
-    plt.scatter(x_a, df_spec)
-    plt.show()"""
-"""
-"""
 """
 # variables
 threshold = list(repeat(0.80, 18))
@@ -143,46 +97,8 @@ midline = list(repeat(0.50, 24))
 time = list(range(1, 24))
 time_array = np.array(time)
 """
-# data without pre-phase
+
 """
-a01_corr = np.array([7, 10, 13, 11, 9, 11, 6, 11, 11, 11, 12, 13, 14, 13, 12, 14])
-a01_trials = np.array([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
-a02_corr = np.array([3, 7, 6, 5, 6, 11, 8, 6, 10, 7, 13, 10, 13, 13, 8, 9])
-a02_trials = np.array([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 14, 15, 15, 15, 15])
-
-a03_corr = np.array([9, 11, 7, 9, 10, 8, 9, 10, 7, 9, 9, 12, 9, 11, 9, 8])
-a03_trials = np.array([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
-a04_corr = np.array([10, 10, 13, 9, 10, 10, 10, 13, 13, 13, 14, 12, 14, 10, 15, 11])
-a04_trials = np.array([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
-a05_corr = np.array([9, 7, 9, 9, 7, 8, 2, 6, 5, 3, 5, 6, 12, 8, 10, 13])
-a05_trials = np.array([15, 11, 15, 15, 14, 13, 6, 12, 10, 5, 14, 14, 15, 12, 15, 15])
-
-a06_corr = np.array([9, 8, 11, 8, 11, 9, 10, 9, 14, 9, 11, 13, 13, 12, 12, 12])
-a06_trials = np.array([15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-"""
-"""# data with pre-phase
-
-a01_corr = np.array([17, 13, 9, 7, 10, 10, 9, 7, 10, 13, 11, 9, 11, 6, 11, 11, 11, 12, 13, 14, 13, 12, 14])
-a01_trials = np.array([26, 26, 15, 12, 16, 13, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
-a02_corr = np.array([8, 10, 6, 12, 6, 5, 12, 3, 7, 6, 5, 6, 11, 8, 6, 10, 7, 13, 10, 13, 13, 8, 9])
-a02_trials = np.array([24, 22, 14, 21, 16, 12, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 14, 15, 15, 15, 15])
-
-a03_corr = np.array([12, 15, 11, 14, 7, 6, 10, 9, 11, 7, 9, 10, 8, 9, 10, 7, 9, 9, 12, 9, 11, 9, 8])
-a03_trials = np.array([24, 26, 15, 25, 17, 13, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
-a04_corr = np.array([7, 9, 8, 20, 8, 13, 4, 10, 10, 13, 9, 10, 10, 10, 13, 13, 13, 14, 12, 14, 10, 15, 11])
-a04_trials = np.array([15, 14, 13, 25, 12, 16, 7, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
-a05_corr = np.array([2, 6, 5, 7, 5, 7, 4, 9, 7, 9, 9, 7, 8, 2, 6, 5, 3, 5, 6, 12, 8, 10, 13])
-a05_trials = np.array([9, 13, 13, 13, 10, 13, 7, 15, 11, 15, 15, 14, 13, 6, 12, 10, 5, 14, 14, 15, 12, 15, 15])
-
-a06_corr = np.array([6, 6, 7, 16, 10, 4, 10, 9, 8, 11, 8, 11, 9, 10, 9, 14, 9, 11, 13, 13, 12, 12, 12])
-a06_trials = np.array([14, 14, 13, 25, 17, 7, 17, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15])
-
 names = ['a01', 'a02', 'a03', 'a04', 'a05', 'a06']
 
 # convert to percent
