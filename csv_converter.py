@@ -15,8 +15,6 @@ import openpyxl
 # From each column, we then extract a numpy array, flatten it, and get a big array with all the trials for one fish over all the days. 
 # This is then used in the logistic regression
 
-
-
 curr_filepath = os.getcwd()
 fig_filepath_base = os.path.dirname(curr_filepath)
 fig_filepath = os.path.join(fig_filepath_base, 'figures')
@@ -43,6 +41,7 @@ for key in keys:
                 all_fish.append(name)
 fish_dataframe = pd.DataFrame(index=np.arange(len(keys)), columns=all_fish)
 
+# all fish, all stimuli
 for index, key in enumerate(keys):
     df_run = df[key]
     for fish in all_fish:
@@ -51,6 +50,32 @@ for index, key in enumerate(keys):
             curr_data = curr_data.dropna()
             fish_dataframe.at[index,fish] = curr_data
 fish_dataframe.to_hdf("training_dataframe.hf", key="df")
+
+# all fish, only high
+for index, key in enumerate(keys):
+    df_run = df[key]
+    for fish in all_fish:
+        if fish in df_run.columns:
+            curr_data = df_run[fish]
+            curr_data = curr_data.dropna()
+            embed()
+            quit()
+            fish_dataframe.at[index,fish] = curr_data
+fish_dataframe.to_hdf("training_dataframe.hf", key="df")
+
+# all fish, only low
+for index, key in enumerate(keys):
+    df_run = df[key]
+    for fish in all_fish:
+        if fish in df_run.columns:
+            curr_data = df_run[fish]
+            curr_data = curr_data.dropna()
+            fish_dataframe.at[index,fish] = curr_data
+fish_dataframe.to_hdf("training_dataframe.hf", key="df")
+
+
+
+
 """
 for fish in all_fish:
     curr_fish = fish_dataframe[fish]

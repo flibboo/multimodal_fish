@@ -1,26 +1,44 @@
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
+import statistics
 from IPython import embed
+
 
 def flatten_fish(fish_name, fish_array):
     curr_fish = fish_array[fish_name]
     curr_fish = curr_fish.dropna()
     curr_fish_array = np.array(curr_fish)
     curr_fish_flattened_array = np.concatenate(curr_fish_array).ravel()
+
     return curr_fish_flattened_array
 
-def percentage_creation(dataframe):
-    count = 0
-    for name in dataframe.columns:
-        df = dataframe[name][count]
-        df = df.dropna()
-        print(first_column=df.loc[:, 0])
-        embed()
-        quit()
-    pass
 
-def fish_regression(fish_name, fish_array):
-    for percentage, name in zip(all_percentages, names):
+def percentage_creation(dataframe):  # aktuell funktioniert es nur für das erste Scheet, geht aber nicht weiter
+    count = 0
+    percentages = []
+
+    for name in dataframe.columns:
+        l = globals()['perc_%s' % name]  # stoppt hier immer für die Listen erstellung
+        print(l)
+        while count != 47:  # wie ersetze ich die zahl?
+            df = dataframe[name][count]
+            if str(df) != 'nan':
+                df = df.dropna()
+                df_len = (len(df)) - 1  # zählt erste Reihe mit, deswegen minus 1
+                l.append(np.sum(df) / df_len)
+            count += 1
+            continue
+        count = 0
+    print(l)
+    return percentages
+
+
+def fish_regression(fish, flattened_fish, percentages):
+    time = len(flattened_fish)  # wie bekomme ich die Zeit?
+    print(time)
+    for percentage, name in zip(percentages, fish):
         x_axis = np.arange(len(time)).reshape(-1, 1)
 
         bool_trial = percentage > 0.7
@@ -36,11 +54,113 @@ def fish_regression(fish_name, fish_array):
         model.predict_proba(x_axis)  # shows performance of the model
         model.predict(x_axis)  # shows the predictions
         print(model.score(x_axis, y_axis))  # shows the accuracy
-    pass
+        plt.scatter(x_axis, y_axis)
+        plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
 
-def correct_trials_per_day(fish_array):
-    pass
-    #return(percentages)
+    return plt
 
-def plot_scatter():
-    pass
+
+def plot_all_together(percentages, time):
+    # all plots in one graphic
+    fig, ax = plt.subplots()
+    time_array = np.array(time)
+
+    E_xy_sum = []
+    E_x_sum = []
+    E_y_sum = []
+    E_x_2_sum = []
+
+    for percentage in percentages:
+        ax.plot(time, percentage, "lightgrey", linewidth=0.8)
+        x = time_array
+        N = 23  # wie zähle ich die sheets????
+
+        # linear regression (handmade)
+        y = percentage
+        E_xy = sum(time_array * percentage)
+        E_x = sum(time_array)
+        E_y = sum(percentage)
+        E_x_2 = sum(x * x)
+        m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
+        b = (E_y - (m * E_x)) / N
+        ax.plot(time, m * time_array + b, linewidth=0.8)
+        # print('y =', m, 'x +', b)
+
+        # summed axes
+        E_x_sum.append(E_x)
+        E_y_sum.append(E_y)
+        E_xy_sum.append(E_xy)
+        E_x_2_sum.append(E_x_2)
+
+    # summed regression
+    E_y_med = statistics.median(E_y_sum)
+    E_x_med = statistics.median(E_x_sum)
+    E_xy_med = statistics.median(E_xy_sum)
+    E_x_2_med = statistics.median(E_x_2_sum)
+
+    m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
+    b_sum = (E_y_med - (m * E_x_med)) / N
+    ax.plot(time, m_sum * time_array + b_sum, "black", linewidth=2)
+
+    # ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
+    # ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
+
+    ax.set_xlabel('days')
+    ax.set_ylabel('correct choices in %')
+    ax.set_xlim([0, 24])
+    ax.set_ylim([0, 1.05])
+
+    return ax
+
+def plot_single(percentages, time):
+    # one plot per fish
+
+    time_array = np.array(time)
+
+    E_xy_sum = []
+    E_x_sum = []
+    E_y_sum = []
+    E_x_2_sum = []
+
+    for percentage in percentages:
+        fig, ax = plt.subplots()
+        ax.plot(time, percentage, "lightgrey", linewidth=0.8)
+        x = time_array
+        N = 23  # wie zähle ich die sheets????
+
+        # linear regression (handmade)
+        y = percentage
+        E_xy = sum(time_array * percentage)
+        E_x = sum(time_array)
+        E_y = sum(percentage)
+        E_x_2 = sum(x * x)
+        m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
+        b = (E_y - (m * E_x)) / N
+        ax.plot(time, m * time_array + b, linewidth=0.8)
+        # print('y =', m, 'x +', b)
+
+        # summed axes
+        E_x_sum.append(E_x)
+        E_y_sum.append(E_y)
+        E_xy_sum.append(E_xy)
+        E_x_2_sum.append(E_x_2)
+
+    # summed regression
+    E_y_med = statistics.median(E_y_sum)
+    E_x_med = statistics.median(E_x_sum)
+    E_xy_med = statistics.median(E_xy_sum)
+    E_x_2_med = statistics.median(E_x_2_sum)
+
+    m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
+    b_sum = (E_y_med - (m * E_x_med)) / N
+    ax.plot(time, m_sum * time_array + b_sum, "black", linewidth=2)
+
+    # ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
+    # ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
+
+    ax.set_xlabel('days')
+    ax.set_ylabel('correct choices in %')
+    ax.set_xlim([0, 24])
+    ax.set_ylim([0, 1.05])
+
+    return ax

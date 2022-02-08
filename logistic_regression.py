@@ -8,8 +8,6 @@ all_fish = np.array(training_data.columns)
 
 
 percentage_creation(training_data)
-embed()
-quit()
 
 # Parse through fish
 for fish in all_fish:
