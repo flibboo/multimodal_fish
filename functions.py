@@ -35,15 +35,14 @@ def percentage_creation(dataframe):
 def fish_regression(fish, flattened_fish, percentages):
 
     time = len(flattened_fish)  # wie bekomme ich die Zeit?
-    print(time)
-    embed()
-    quit()
     for percentage, name in zip(percentages, fish):
-        x_axis = np.arange(len(time)).reshape(-1, 1)
+        x_axis = np.arange(time).reshape(-1, 1)
 
-        bool_trial = percentage > 0.7
+        bool_trial = flattened_fish > 0.7
         y_axis = bool_trial * 1
 
+        #y_axis = percentages["perc_%s" % fish]
+        #y_axis = flattened_fish
         # model = LogisticRegression(solver='liblinear', random_state=0)
         model = LogisticRegression(C=10.0, class_weight=None, dual=False, fit_intercept=True,
                                    intercept_scaling=1, l1_ratio=None, max_iter=100,
@@ -60,30 +59,37 @@ def fish_regression(fish, flattened_fish, percentages):
     return plt
 
 
-def plot_all_together(percentages, time):
-    # all plots in one graphic
+def plot_all_together(percentages, all_fish):
     fig, ax = plt.subplots()
-    time_array = np.array(time)
 
     E_xy_sum = []
     E_x_sum = []
     E_y_sum = []
     E_x_2_sum = []
 
-    for percentage in percentages:
-        ax.plot(time, percentage, "lightgrey", linewidth=0.8)
-        x = time_array
-        N = 23  # wie zähle ich die sheets????
+    for fish in all_fish:
+        curr_data = percentages["perc_%s" % fish]
+        time = len(curr_data)
+        time_array = np.array(time)
+        time_list = list(range(1, (time+1)))
+
+        ax.plot(time_list, curr_data, "lightgrey", linewidth=0.8)
+        print("here")
+        x = time_list
+        N = time
 
         # linear regression (handmade)
-        y = percentage
-        E_xy = sum(time_array * percentage)
-        E_x = sum(time_array)
-        E_y = sum(percentage)
-        E_x_2 = sum(x * x)
+        y = curr_data
+        E_xy = sum([a * b for a, b in zip(y, x)])
+        E_x = sum(x)
+        E_y = sum(y)
+        E_x_2 = sum([a*b for a, b in zip(x, x)])
+
         m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
         b = (E_y - (m * E_x)) / N
-        ax.plot(time, m * time_array + b, linewidth=0.8)
+
+        line_calc = [m * x_l + b for x_l in time_list]
+        ax.plot(time_list, line_calc, "lightgrey", linewidth=0.8)
         # print('y =', m, 'x +', b)
 
         # summed axes
@@ -100,67 +106,75 @@ def plot_all_together(percentages, time):
 
     m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
     b_sum = (E_y_med - (m * E_x_med)) / N
-    ax.plot(time, m_sum * time_array + b_sum, "black", linewidth=2)
-
-    # ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
-    # ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
+    line_calc = [m_sum * x_l + b_sum for x_l in time_list]
+    ax.plot(time_list, line_calc, "black", linewidth=2)
 
     ax.set_xlabel('days')
     ax.set_ylabel('correct choices in %')
-    ax.set_xlim([0, 24])
+    ax.set_xlim([0, (time+1)])
     ax.set_ylim([0, 1.05])
+    plt.title("Regression of all fish")
 
     return ax
 
-def plot_single(percentages, time):
-    # one plot per fish
-
-    time_array = np.array(time)
-
+def plot_single(percentages, all_fish):
     E_xy_sum = []
     E_x_sum = []
     E_y_sum = []
     E_x_2_sum = []
 
-    for percentage in percentages:
+    for fish in all_fish:
+        curr_data = percentages["perc_%s" % fish]
+        time = len(curr_data)
+        time_array = np.array(time)
+        time_list = list(range(1, (time + 1)))
+
         fig, ax = plt.subplots()
-        ax.plot(time, percentage, "lightgrey", linewidth=0.8)
-        x = time_array
-        N = 23  # wie zähle ich die sheets????
+        ax.plot(time_list, curr_data)
+
+        x = time_list
+        N = time
 
         # linear regression (handmade)
-        y = percentage
-        E_xy = sum(time_array * percentage)
-        E_x = sum(time_array)
-        E_y = sum(percentage)
-        E_x_2 = sum(x * x)
+        y = curr_data
+        E_xy = sum([a * b for a, b in zip(y, x)])
+        E_x = sum(x)
+        E_y = sum(y)
+        E_x_2 = sum([a * b for a, b in zip(x, x)])
+
         m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
         b = (E_y - (m * E_x)) / N
-        ax.plot(time, m * time_array + b, linewidth=0.8)
+
+        line_calc = [m * x_l + b for x_l in time_list]
+        ax.plot(time_list, line_calc, "black", linewidth=0.8)
         # print('y =', m, 'x +', b)
 
-        # summed axes
-        E_x_sum.append(E_x)
-        E_y_sum.append(E_y)
-        E_xy_sum.append(E_xy)
-        E_x_2_sum.append(E_x_2)
-
-    # summed regression
-    E_y_med = statistics.median(E_y_sum)
-    E_x_med = statistics.median(E_x_sum)
-    E_xy_med = statistics.median(E_xy_sum)
-    E_x_2_med = statistics.median(E_x_2_sum)
-
-    m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
-    b_sum = (E_y_med - (m * E_x_med)) / N
-    ax.plot(time, m_sum * time_array + b_sum, "black", linewidth=2)
-
-    # ax.plot(range(0, 24), threshold, '--', linewidth=0.8)  # 80% Grenze
-    # ax.plot(range(0, 24), midline, '--', linewidth=0.8)  # 50% Grenze
-
-    ax.set_xlabel('days')
-    ax.set_ylabel('correct choices in %')
-    ax.set_xlim([0, 24])
-    ax.set_ylim([0, 1.05])
+        ax.set_xlabel('days')
+        ax.set_ylabel('correct choices in %')
+        ax.set_xlim([0, (time + 1)])
+        ax.set_ylim([0, 1.05])
+        plt.title("%s" %fish)
 
     return ax
+
+def low_data_use(training_low_data, all_fish):
+    percentages = percentage_creation(training_low_data)
+    plot_all_together(percentages, all_fish)
+    plt.show()
+    embed()
+    plot_single(percentages, all_fish)
+    plt.show()
+    embed()
+
+    return percentages, plot_all_together, plot_single
+
+def high_data_use(training_high_data, all_fish):
+    percentages = percentage_creation(training_high_data)
+    plot_all_together(percentages, all_fish)
+    plt.show()
+    embed()
+    plot_single(percentages, all_fish)
+    plt.show()
+    embed()
+
+    return percentages, plot_all_together, plot_single
