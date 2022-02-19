@@ -15,29 +15,29 @@ def flatten_fish(fish_name, fish_array):
     return curr_fish_flattened_array
 
 
-def percentage_creation(dataframe):  # aktuell funktioniert es nur für das erste Scheet, geht aber nicht weiter
-    count = 0
-    percentages = []
+def percentage_creation(dataframe):
+    percentages = {}
 
     for name in dataframe.columns:
-        l = globals()['perc_%s' % name]  # stoppt hier immer für die Listen erstellung
-        print(l)
-        while count != 47:  # wie ersetze ich die zahl?
-            df = dataframe[name][count]
-            if str(df) != 'nan':
-                df = df.dropna()
-                df_len = (len(df)) - 1  # zählt erste Reihe mit, deswegen minus 1
-                l.append(np.sum(df) / df_len)
-            count += 1
-            continue
-        count = 0
-    print(l)
+        l = []
+        dkey = 'perc_%s' % name
+        curr_fish_data = dataframe[name]
+        for index,date in enumerate(curr_fish_data):
+            curr_date_data = curr_fish_data.iloc[index]
+            if str(curr_date_data) != 'nan':
+                curr_date_data = curr_date_data.dropna()
+                curr_date_data_len = len(curr_date_data)
+                l.append(np.round((np.sum(curr_date_data) / curr_date_data_len),3))
+        percentages.update({dkey: l})
     return percentages
 
 
 def fish_regression(fish, flattened_fish, percentages):
+
     time = len(flattened_fish)  # wie bekomme ich die Zeit?
     print(time)
+    embed()
+    quit()
     for percentage, name in zip(percentages, fish):
         x_axis = np.arange(len(time)).reshape(-1, 1)
 

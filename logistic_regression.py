@@ -7,7 +7,7 @@ training_data = pd.read_hdf("training_dataframe.hf")
 all_fish = np.array(training_data.columns)
 
 
-percentage_creation(training_data)
+percentages = percentage_creation(training_data)
 
 # Parse through fish
 for fish in all_fish:
@@ -15,4 +15,4 @@ for fish in all_fish:
 
     # At this point you can do the Logistic Regression
 
-    fish_regression(fish, curr_fish_flattened_array)
+    fish_regression(fish, flattened_fish, percentages)

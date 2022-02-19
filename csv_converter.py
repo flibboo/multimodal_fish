@@ -28,11 +28,11 @@ df_1 = pd.read_excel(training, sheet_name="25.08.2021", engine='openpyxl')
 df_2 = pd.read_excel(training, sheet_name=[1], engine='openpyxl')
 df = pd.read_excel(training, sheet_name=None, engine='openpyxl')
 
-keys = df.keys()
+keys = df.keys() # keys = sheetname(dates)
 count = 0
 all_fish = []
 
-for key in keys:
+for key in keys: # geht durch die sheets
     df_run = df[key]
     column_names = df_run.columns
     for name in column_names:
@@ -40,6 +40,9 @@ for key in keys:
             if name.startswith('2020'):
                 all_fish.append(name)
 fish_dataframe = pd.DataFrame(index=np.arange(len(keys)), columns=all_fish)
+low_fish_dataframe = pd.DataFrame(index=np.arange(len(keys)), columns=all_fish)
+high_fish_dataframe = pd.DataFrame(index=np.arange(len(keys)), columns=all_fish)
+
 
 # all fish, all stimuli
 for index, key in enumerate(keys):
@@ -51,29 +54,31 @@ for index, key in enumerate(keys):
             fish_dataframe.at[index,fish] = curr_data
 fish_dataframe.to_hdf("training_dataframe.hf", key="df")
 
-# all fish, only high
+# all fish, stimulus sorted
 for index, key in enumerate(keys):
     df_run = df[key]
     for fish in all_fish:
         if fish in df_run.columns:
             curr_data = df_run[fish]
-            curr_data = curr_data.dropna()
-            embed()
-            quit()
-            fish_dataframe.at[index,fish] = curr_data
-fish_dataframe.to_hdf("training_dataframe.hf", key="df")
+            stim_data = df_run["Stimmulus"]
 
-# all fish, only low
-for index, key in enumerate(keys):
-    df_run = df[key]
-    for fish in all_fish:
-        if fish in df_run.columns:
-            curr_data = df_run[fish]
-            curr_data = curr_data.dropna()
-            fish_dataframe.at[index,fish] = curr_data
-fish_dataframe.to_hdf("training_dataframe.hf", key="df")
+            stim_low_index = stim_data[stim_data == 'low'].index
+            if len(stim_low_index) == 0:
+                continue
+            stim_low_data = curr_data[stim_low_index]
+            stim_low_data = stim_low_data.dropna()
+            low_fish_dataframe.at[index,fish] = stim_low_data
 
-
+            stim_high_index = stim_data[stim_data == 'high'].index
+            if len(stim_high_index) == 0:
+                continue
+            stim_high_data = curr_data[stim_high_index]
+            stim_high_data = stim_high_data.dropna()
+            high_fish_dataframe.at[index, fish] = stim_high_data
+low_fish_dataframe.dropna()
+low_fish_dataframe.to_hdf("training_low_dataframe.hf", key="df")
+high_fish_dataframe.dropna()
+high_fish_dataframe.to_hdf("training_high_dataframe.hf", key="df")
 
 
 """
