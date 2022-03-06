@@ -52,7 +52,7 @@ def fish_regression(fish, flattened_fish, percentages):
         model.fit(x_axis, y_axis)
         model.predict_proba(x_axis)  # shows performance of the model
         model.predict(x_axis)  # shows the predictions
-        print(model.score(x_axis, y_axis))  # shows the accuracy
+        #print(model.score(x_axis, y_axis))  # shows the accuracy
         plt.scatter(x_axis, y_axis)
         plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
 
@@ -74,7 +74,6 @@ def plot_all_together(percentages, all_fish):
         time_list = list(range(1, (time+1)))
 
         ax.plot(time_list, curr_data, "lightgrey", linewidth=0.8)
-        print("here")
         x = time_list
         N = time
 
@@ -105,9 +104,10 @@ def plot_all_together(percentages, all_fish):
     E_x_2_med = statistics.median(E_x_2_sum)
 
     m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
-    b_sum = (E_y_med - (m * E_x_med)) / N
+    b_sum = (E_y_med - (m_sum * E_x_med)) / N
     line_calc = [m_sum * x_l + b_sum for x_l in time_list]
     ax.plot(time_list, line_calc, "black", linewidth=2)
+
 
     ax.set_xlabel('days')
     ax.set_ylabel('correct choices in %')
@@ -118,25 +118,21 @@ def plot_all_together(percentages, all_fish):
     return ax
 
 def plot_single(percentages, all_fish):
-    E_xy_sum = []
-    E_x_sum = []
-    E_y_sum = []
-    E_x_2_sum = []
 
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
-        time_array = np.array(time)
         time_list = list(range(1, (time + 1)))
+        time_array = np.array(time_list)
 
         fig, ax = plt.subplots()
         ax.plot(time_list, curr_data)
-
+        y = curr_data
         x = time_list
         N = time
-
+        """
         # linear regression (handmade)
-        y = curr_data
+        
         E_xy = sum([a * b for a, b in zip(y, x)])
         E_x = sum(x)
         E_y = sum(y)
@@ -148,6 +144,10 @@ def plot_single(percentages, all_fish):
         line_calc = [m * x_l + b for x_l in time_list]
         ax.plot(time_list, line_calc, "black", linewidth=0.8)
         # print('y =', m, 'x +', b)
+        """
+        m_1, b_1 = np.polyfit(x, y, 1)
+        ax.plot(x, m_1*time_array + b_1, linewidth=2)
+
 
         ax.set_xlabel('days')
         ax.set_ylabel('correct choices in %')

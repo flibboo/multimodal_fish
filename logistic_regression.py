@@ -6,15 +6,36 @@ from functions import *
 training_data = pd.read_hdf("training_dataframe.hf")
 training_low_data = pd.read_hdf("training_low_dataframe.hf")
 training_high_data = pd.read_hdf("training_high_dataframe.hf")
-
+embed()
 all_fish = np.array(training_data.columns)
 
+"""
+all fish
+"""
 percentages = percentage_creation(training_data)
-
 # fish plots
 plot_all_together(percentages, all_fish)
 plt.show()
+plot_single(percentages, all_fish)
+plt.show()
 
+"""
+high  (hat grade probleme)
+"""
+percentages = percentage_creation(training_high_data)
+# fish plots
+plot_all_together(percentages, all_fish)
+plt.show()
+plot_single(percentages, all_fish)
+plt.show()
+
+"""
+low (berechnung von sum regression funktioniert nicht)
+"""
+percentages = percentage_creation(training_low_data)
+# fish plots
+plot_all_together(percentages, all_fish)
+plt.show()
 plot_single(percentages, all_fish)
 plt.show()
 
@@ -29,7 +50,8 @@ for fish in all_fish:
 
 
 # using only data of low/high stimuli (noch in Probephase)
-
+"""
 low_data_use(training_low_data, all_fish) # funktioniert nicht wirklich, die gesammelten funktionen sind mist
 
 high_data_use(training_high_data, all_fish)
+"""
