@@ -6,7 +6,7 @@ from functions import *
 training_data = pd.read_hdf("training_dataframe.hf")
 training_low_data = pd.read_hdf("training_low_dataframe.hf")
 training_high_data = pd.read_hdf("training_high_dataframe.hf")
-embed()
+
 all_fish = np.array(training_data.columns)
 
 """
@@ -42,11 +42,12 @@ plt.show()
 
 # Parse through fish
 for fish in all_fish:
-    flattened_fish = flatten_fish(fish, training_data) # hier werden alle daten verwendet, nicht nur high oder low
+    flattened_fish = flatten_fish(fish, training_low_data) # hier werden alle daten verwendet, nicht nur high oder low
 
     # At this point you can do the Logistic Regression
 
     fish_regression(fish, flattened_fish, percentages)
+    plt.show()
 
 
 # using only data of low/high stimuli (noch in Probephase)
