@@ -10,7 +10,7 @@ embed()
 all_fish = np.array(training_data.columns)
 
 """
-all fish
+all fish (low und high sind komisch, kann das gesammte richtig sein?)
 """
 percentages = percentage_creation(training_data)
 # fish plots
@@ -51,7 +51,7 @@ for fish in all_fish:
 
 # using only data of low/high stimuli (noch in Probephase)
 """
-low_data_use(training_low_data, all_fish) # funktioniert nicht wirklich, die gesammelten funktionen sind mist
+low_data_use(training_low_data, all_fish)
 
 high_data_use(training_high_data, all_fish)
 """

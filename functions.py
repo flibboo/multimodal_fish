@@ -131,6 +131,8 @@ def plot_single(percentages, all_fish):
         x = time_list
         N = time
         """
+        brauche ich grade nicht(aber falls doch bleibts hier)
+        
         # linear regression (handmade)
         
         E_xy = sum([a * b for a, b in zip(y, x)])
