@@ -7,6 +7,7 @@ training_data = pd.read_hdf("training_dataframe.hf")
 training_low_data = pd.read_hdf("training_low_dataframe.hf")
 training_high_data = pd.read_hdf("training_high_dataframe.hf")
 
+
 all_fish = np.array(training_data.columns)
 
 """

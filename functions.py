@@ -66,6 +66,8 @@ def plot_all_together(percentages, all_fish):
     E_x_sum = []
     E_y_sum = []
     E_x_2_sum = []
+    m_summed = []
+    b_summed = []
 
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
@@ -88,10 +90,13 @@ def plot_all_together(percentages, all_fish):
         b = (E_y - (m * E_x)) / N
 
         line_calc = [m * x_l + b for x_l in time_list]
+
         ax.plot(time_list, line_calc, "lightgrey", linewidth=0.8)
         # print('y =', m, 'x +', b)
 
         # summed axes
+        m_summed.append(m)
+        b_summed.append(b)
         E_x_sum.append(E_x)
         E_y_sum.append(E_y)
         E_xy_sum.append(E_xy)
@@ -102,10 +107,14 @@ def plot_all_together(percentages, all_fish):
     E_x_med = statistics.median(E_x_sum)
     E_xy_med = statistics.median(E_xy_sum)
     E_x_2_med = statistics.median(E_x_2_sum)
+    m_median = statistics.median(m_summed)
+    b_median = statistics.median(b_summed)
 
     m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
     b_sum = (E_y_med - (m_sum * E_x_med)) / N
-    line_calc = [m_sum * x_l + b_sum for x_l in time_list]
+
+    #line_calc = [m_sum * x_l + b_sum for x_l in time_list]
+    line_calc = [m_median * x_l + b_median for x_l in time_list]
     ax.plot(time_list, line_calc, "black", linewidth=2)
 
 

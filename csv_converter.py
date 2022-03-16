@@ -59,6 +59,23 @@ for index, key in enumerate(keys):
     df_run = df[key]
     for fish in all_fish:
         if fish in df_run.columns:
+
+            curr_data = df_run[fish]
+            stim_data = df_run["Stimmulus"]
+
+            stim_high_index = stim_data[stim_data == 'high'].index
+
+            if len(stim_high_index) == 0:
+                continue
+            stim_high_data = curr_data[stim_high_index]
+            stim_high_data = stim_high_data.dropna()
+            high_fish_dataframe.at[index, fish] = stim_high_data
+
+for index, key in enumerate(keys):
+    df_run = df[key]
+    for fish in all_fish:
+        if fish in df_run.columns:
+
             curr_data = df_run[fish]
             stim_data = df_run["Stimmulus"]
 
@@ -69,12 +86,8 @@ for index, key in enumerate(keys):
             stim_low_data = stim_low_data.dropna()
             low_fish_dataframe.at[index,fish] = stim_low_data
 
-            stim_high_index = stim_data[stim_data == 'high'].index
-            if len(stim_high_index) == 0:
-                continue
-            stim_high_data = curr_data[stim_high_index]
-            stim_high_data = stim_high_data.dropna()
-            high_fish_dataframe.at[index, fish] = stim_high_data
+
+
 low_fish_dataframe.dropna()
 low_fish_dataframe.to_hdf("training_low_dataframe.hf", key="df")
 high_fish_dataframe.dropna()
