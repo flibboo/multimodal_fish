@@ -32,34 +32,7 @@ def percentage_creation(dataframe):
     return percentages
 
 
-def fish_regression(fish, flattened_fish, percentages):
-
-    time = len(flattened_fish)  # wie bekomme ich die Zeit?
-    for percentage, name in zip(percentages, fish):
-        x_axis = np.arange(time).reshape(-1, 1)
-
-        bool_trial = flattened_fish > 0.7
-        y_axis = bool_trial * 1
-
-        #y_axis = percentages["perc_%s" % fish]
-        #y_axis = flattened_fish
-        # model = LogisticRegression(solver='liblinear', random_state=0)
-        model = LogisticRegression(C=10.0, class_weight=None, dual=False, fit_intercept=True,
-                                   intercept_scaling=1, l1_ratio=None, max_iter=100,
-                                   multi_class='ovr', n_jobs=None, penalty='l2',
-                                   random_state=0, solver='liblinear', tol=0.0001, verbose=0,
-                                   warm_start=False)
-        model.fit(x_axis, y_axis)
-        model.predict_proba(x_axis)  # shows performance of the model
-        model.predict(x_axis)  # shows the predictions
-        #print(model.score(x_axis, y_axis))  # shows the accuracy
-        plt.scatter(x_axis, y_axis)
-        plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
-
-    return plt
-
-
-def plot_all_together(percentages, all_fish):
+def plot_all_together(percentages, all_fish, plot_name):
     fig, ax = plt.subplots()
 
     E_xy_sum = []
@@ -113,8 +86,7 @@ def plot_all_together(percentages, all_fish):
     m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
     b_sum = (E_y_med - (m_sum * E_x_med)) / N
 
-    #line_calc = [m_sum * x_l + b_sum for x_l in time_list]
-    line_calc = [m_median * x_l + b_median for x_l in time_list]
+    line_calc = [m_median * x_l + b_median for x_l in time_list] # loop is for multiplying lists
     ax.plot(time_list, line_calc, "black", linewidth=2)
 
 
@@ -122,11 +94,12 @@ def plot_all_together(percentages, all_fish):
     ax.set_ylabel('correct choices in %')
     ax.set_xlim([0, (time+1)])
     ax.set_ylim([0, 1.05])
-    plt.title("Regression of all fish")
+    plt.title("%s" % plot_name)
 
     return ax
 
-def plot_single(percentages, all_fish):
+
+def plot_single(percentages, all_fish, plot_name_single):
 
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
@@ -164,28 +137,56 @@ def plot_single(percentages, all_fish):
         ax.set_ylabel('correct choices in %')
         ax.set_xlim([0, (time + 1)])
         ax.set_ylim([0, 1.05])
-        plt.title("%s" %fish)
+        plt.title("%s %s" % (fish, plot_name_single))
 
     return ax
 
-def low_data_use(training_low_data, all_fish):
+
+def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_low_data)
-    plot_all_together(percentages, all_fish)
+    plot_all_together(percentages, all_fish, plot_name)
     plt.show()
-    embed()
-    plot_single(percentages, all_fish)
+
+    plot_single(percentages, all_fish, plot_name_single)
     plt.show()
-    embed()
 
     return percentages, plot_all_together, plot_single
 
-def high_data_use(training_high_data, all_fish):
+
+def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_high_data)
-    plot_all_together(percentages, all_fish)
+    plot_all_together(percentages, all_fish, plot_name)
     plt.show()
-    embed()
-    plot_single(percentages, all_fish)
+    plot_single(percentages, all_fish, plot_name_single)
     plt.show()
-    embed()
 
     return percentages, plot_all_together, plot_single
+
+
+def fish_regression(fish, flattened_fish, percentages, plot_name_single):
+
+    time = len(flattened_fish)
+    for percentage, name in zip(percentages, fish):
+        x_axis = np.arange(time).reshape(-1, 1)
+
+        bool_trial = flattened_fish > 0.7
+        y_axis = bool_trial * 1
+
+        #y_axis = percentages["perc_%s" % fish]
+        #y_axis = flattened_fish
+        # model = LogisticRegression(solver='liblinear', random_state=0)
+        model = LogisticRegression(C=10.0, class_weight=None, dual=False, fit_intercept=True,
+                                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                                   multi_class='ovr', n_jobs=None, penalty='l2',
+                                   random_state=0, solver='liblinear', tol=0.0001, verbose=0,
+                                   warm_start=False)
+        model.fit(x_axis, y_axis)
+        model.predict_proba(x_axis)  # shows performance of the model
+        model.predict(x_axis)  # shows the predictions
+        #print(model.score(x_axis, y_axis))  # shows the accuracy
+        plt.scatter(x_axis, y_axis)
+        plt.title("%s %s" % (fish, plot_name_single))
+        plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
+
+    return plt
+
