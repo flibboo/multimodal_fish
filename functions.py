@@ -83,8 +83,8 @@ def plot_all_together(percentages, all_fish, plot_name):
     m_median = statistics.median(m_summed)
     b_median = statistics.median(b_summed)
 
-    m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
-    b_sum = (E_y_med - (m_sum * E_x_med)) / N
+    # m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
+    # b_sum = (E_y_med - (m_sum * E_x_med)) / N
 
     line_calc = [m_median * x_l + b_median for x_l in time_list] # loop is for multiplying lists
     ax.plot(time_list, line_calc, "black", linewidth=2)

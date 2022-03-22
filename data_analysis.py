@@ -2,6 +2,7 @@ import pandas as pd
 from IPython import embed
 import numpy as np
 from functions import *
+
 # Open file
 training_data = pd.read_hdf("training_dataframe.hf")
 training_low_data = pd.read_hdf("training_low_dataframe.hf")
