@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 import statistics
+from scipy import stats
 from IPython import embed
 
 
@@ -18,17 +19,19 @@ def flatten_fish(fish_name, fish_array):
 def percentage_creation(dataframe):
     percentages = {}
 
+
     for name in dataframe.columns:
         l = []
         dkey = 'perc_%s' % name
         curr_fish_data = dataframe[name]
-        for index,date in enumerate(curr_fish_data):
+        for index, date in enumerate(curr_fish_data):
             curr_date_data = curr_fish_data.iloc[index]
             if str(curr_date_data) != 'nan':
                 curr_date_data = curr_date_data.dropna()
                 curr_date_data_len = len(curr_date_data)
                 l.append(np.round((np.sum(curr_date_data) / curr_date_data_len),3))
         percentages.update({dkey: l})
+
     return percentages
 
 
@@ -45,6 +48,8 @@ def plot_all_together(percentages, all_fish, plot_name):
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
+        print(time)
+        print(fish)
         time_array = np.array(time)
         time_list = list(range(1, (time+1)))
 
@@ -61,7 +66,6 @@ def plot_all_together(percentages, all_fish, plot_name):
 
         m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
         b = (E_y - (m * E_x)) / N
-
         line_calc = [m * x_l + b for x_l in time_list]
 
         ax.plot(time_list, line_calc, "lightgrey", linewidth=0.8)
@@ -76,7 +80,7 @@ def plot_all_together(percentages, all_fish, plot_name):
         E_x_2_sum.append(E_x_2)
 
     # summed regression
-    E_y_med = statistics.median(E_y_sum)
+    E_y_med = np.median(E_y_sum)
     E_x_med = statistics.median(E_x_sum)
     E_xy_med = statistics.median(E_xy_sum)
     E_x_2_med = statistics.median(E_x_2_sum)
@@ -87,8 +91,8 @@ def plot_all_together(percentages, all_fish, plot_name):
     # b_sum = (E_y_med - (m_sum * E_x_med)) / N
 
     line_calc = [m_median * x_l + b_median for x_l in time_list] # loop is for multiplying lists
-    ax.plot(time_list, line_calc, "black", linewidth=2)
 
+    ax.plot(time_list, line_calc, "black", linewidth=2)
 
     ax.set_xlabel('days')
     ax.set_ylabel('correct choices in %')
@@ -131,7 +135,13 @@ def plot_single(percentages, all_fish, plot_name_single):
         """
         m_1, b_1 = np.polyfit(x, y, 1)
         ax.plot(x, m_1*time_array + b_1, linewidth=2)
+        print("%s slope:" % fish, m_1)
 
+        # vertical lines for the different training/test phases
+        plt.axvline(x=7, color="red")
+        plt.axvline(x=22, color="red")
+        plt.axvline(x=39, color="red")
+        plt.axvline(x=42, color="red")
 
         ax.set_xlabel('days')
         ax.set_ylabel('correct choices in %')
@@ -145,10 +155,12 @@ def plot_single(percentages, all_fish, plot_name_single):
 def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_low_data)
     plot_all_together(percentages, all_fish, plot_name)
-    plt.show()
+    #plt.show()
+    plt.close()
 
     plot_single(percentages, all_fish, plot_name_single)
-    plt.show()
+    #plt.show()
+    plt.close()
 
     return percentages, plot_all_together, plot_single
 
@@ -156,9 +168,11 @@ def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
 def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_high_data)
     plot_all_together(percentages, all_fish, plot_name)
-    plt.show()
+    #plt.show()
+    plt.close()
     plot_single(percentages, all_fish, plot_name_single)
-    plt.show()
+    #plt.show()
+    plt.close()
 
     return percentages, plot_all_together, plot_single
 
@@ -190,3 +204,22 @@ def fish_regression(fish, flattened_fish, percentages, plot_name_single):
 
     return plt
 
+def diverse_statistics(percentages, flattened_fish): # nix funktioniert hier so richtig, lass es mal stehen, weil kein bock
+    # those lists need some adjustment, because of the different time periods
+    first_day = []
+    last_day = []
+
+    time = len(flattened_fish)
+    time_list = list(range(1, (time + 1)))
+    count = 0
+    for percentage in percentages:
+        curr_perc = np.array(percentages["%s" % percentage])
+        # print(stats.shapiro(curr_perc))  # Shapiro-Wilk-Test
+        # print(np.corrcoef(time_list, curr_perc))  # Pearson Correlation
+        # print(stats.spearmanr(time_list, curr_perc, axis=1))  # Spearman Correlation TIME CORRECT?! want int instead of list
+        # first_day.append(curr_perc[0])
+        # last_day.append(curr_perc[-1])
+
+    print(stats.ttest_rel(first_day, last_day))
+
+    return percentages
