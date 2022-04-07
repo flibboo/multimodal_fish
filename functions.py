@@ -48,8 +48,6 @@ def plot_all_together(percentages, all_fish, plot_name):
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
-        print(time)
-        print(fish)
         time_array = np.array(time)
         time_list = list(range(1, (time+1)))
 
@@ -138,10 +136,19 @@ def plot_single(percentages, all_fish, plot_name_single):
         print("%s slope:" % fish, m_1)
 
         # vertical lines for the different training/test phases
-        plt.axvline(x=7, color="red")
-        plt.axvline(x=22, color="red")
-        plt.axvline(x=39, color="red")
-        plt.axvline(x=42, color="red")
+        # if statements for different igh training days
+        if fish == "2020albi01": fish_num = 15
+        if fish == "2020albi02": fish_num = 19
+        if fish == "2020albi03": fish_num = 20
+        if fish == "2020albi04": fish_num = 16
+        if fish == "2020albi05": fish_num = 19
+        if fish == "2020albi06": fish_num = 16
+        
+        x = 7 # first training days
+        plt.axvline(x, color="lightgrey") # first days mixed (7 days)
+        plt.axvline(x=(fish_num + x), color="lightgrey") # only high training (equals fish_num)
+        plt.axvline(x=(fish_num + x + 17), color="lightgrey") # only low training (17 days)
+        plt.axvline(x=(fish_num + x + 17 + 3), color="lightgrey") # low + high training (3 days)
 
         ax.set_xlabel('days')
         ax.set_ylabel('correct choices in %')
@@ -211,7 +218,6 @@ def diverse_statistics(percentages, flattened_fish): # nix funktioniert hier so 
 
     time = len(flattened_fish)
     time_list = list(range(1, (time + 1)))
-    count = 0
     for percentage in percentages:
         curr_perc = np.array(percentages["%s" % percentage])
         # print(stats.shapiro(curr_perc))  # Shapiro-Wilk-Test
@@ -223,3 +229,17 @@ def diverse_statistics(percentages, flattened_fish): # nix funktioniert hier so 
     print(stats.ttest_rel(first_day, last_day))
 
     return percentages
+
+
+def boxplotting(data_high, data_low, data_mixed):    # unfertig, aktuell dummer scheiß
+    your_highness_list = []
+    a = data_high.values.tolist()
+    b = data_high.iloc[0,0]
+    c = data_high.iloc[0]
+    #your_highness_list.append(b)
+    #data_high.columns["2020albi01"]
+
+    for index, fish in enumerate(data_high.columns):
+        p = p
+    return your_highness_list
+

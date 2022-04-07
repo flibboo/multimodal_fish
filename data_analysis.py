@@ -4,20 +4,26 @@ from IPython import embed
 import numpy as np
 from functions import *
 
-# Open file
+"""
+Open file
+"""
+# training files
 training_data = pd.read_hdf("training_dataframe.hf")
 training_low_data = pd.read_hdf("training_low_dataframe.hf")
 training_high_data = pd.read_hdf("training_high_dataframe.hf")
 
+# testing files
+testing_data = pd.read_hdf("testing_dataframe.hf")
+testing_low_data = pd.read_hdf("testing_low_dataframe.hf")
+testing_high_data = pd.read_hdf("testing_dataframe.hf")
+testing_mixed_data = pd.read_hdf("testing_dataframe.hf")
+
 all_fish = np.array(training_data.columns)
 percentages = percentage_creation(training_data)
 
-embed()
-quit()
 """
 all fish - all data
 """
-
 # fish plots
 plot_name = "All fish, high and low frequent stimuli"
 plot_all_together(percentages, all_fish, plot_name)
@@ -59,6 +65,16 @@ for fish in all_fish:
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
     #plt.show()
     plt.close()
+
+"""
+testing analysis
+"""
+#boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
+
+#plt.show()
+
+
+
 
 """
 other statistics
