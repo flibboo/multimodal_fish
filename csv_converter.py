@@ -214,6 +214,11 @@ for fish in testing_dataframe.columns:
         if len(curr_fish_curr_react) == 0: # skip the first day(no data)
             continue
         for trial_num, trial in enumerate(curr_fish_curr_day):
-            if trial == 1:
+            if trial == 1: # only takes the right ones
                 correct_trials.append(curr_fish_curr_react[trial_num])
         correct_reactions_dataframe.at[index, fish] = correct_trials
+
+correct_reactions_dataframe.to_hdf("testing_reaction_time_dataframe.hf", key="df")
+
+embed()
+quit()

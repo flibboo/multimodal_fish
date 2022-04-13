@@ -19,7 +19,6 @@ def flatten_fish(fish_name, fish_array):
 def percentage_creation(dataframe):
     percentages = {}
 
-
     for name in dataframe.columns:
         l = []
         dkey = 'perc_%s' % name
@@ -101,7 +100,7 @@ def plot_all_together(percentages, all_fish, plot_name):
     return ax
 
 
-def plot_single(percentages, all_fish, plot_name_single):
+def plot_single(percentages, all_fish, plot_name_single, tag):
 
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
@@ -135,20 +134,21 @@ def plot_single(percentages, all_fish, plot_name_single):
         ax.plot(x, m_1*time_array + b_1, linewidth=2)
         print("%s slope:" % fish, m_1)
 
-        # vertical lines for the different training/test phases
-        # if statements for different igh training days
-        if fish == "2020albi01": fish_num = 15
-        if fish == "2020albi02": fish_num = 19
-        if fish == "2020albi03": fish_num = 20
-        if fish == "2020albi04": fish_num = 16
-        if fish == "2020albi05": fish_num = 19
-        if fish == "2020albi06": fish_num = 16
-        
-        x = 7 # first training days
-        plt.axvline(x, color="lightgrey") # first days mixed (7 days)
-        plt.axvline(x=(fish_num + x), color="lightgrey") # only high training (equals fish_num)
-        plt.axvline(x=(fish_num + x + 17), color="lightgrey") # only low training (17 days)
-        plt.axvline(x=(fish_num + x + 17 + 3), color="lightgrey") # low + high training (3 days)
+        if tag == "use vertical lines":
+            # vertical lines for the different training/test phases
+            # if statements for different igh training days
+            if fish == "2020albi01": fish_num = 15
+            if fish == "2020albi02": fish_num = 19
+            if fish == "2020albi03": fish_num = 20
+            if fish == "2020albi04": fish_num = 16
+            if fish == "2020albi05": fish_num = 19
+            if fish == "2020albi06": fish_num = 16
+            
+            x = 7 # first training days
+            plt.axvline(x, color="lightgrey") # first days mixed (7 days)
+            plt.axvline(x=(fish_num + x), color="lightgrey") # only high training (equals fish_num)
+            plt.axvline(x=(fish_num + x + 17), color="lightgrey") # only low training (17 days)
+            plt.axvline(x=(fish_num + x + 17 + 3), color="lightgrey") # low + high training (3 days)
 
         ax.set_xlabel('days')
         ax.set_ylabel('correct choices in %')
@@ -161,15 +161,17 @@ def plot_single(percentages, all_fish, plot_name_single):
 
 def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_low_data)
+    
     plot_all_together(percentages, all_fish, plot_name)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
-    plot_single(percentages, all_fish, plot_name_single)
-    #plt.show()
-    plt.close()
+    tag = "dont use vertical lines" # this tag is for filtering out a graphic add, which is sensless here
+    plot_single(percentages, all_fish, plot_name_single,tag)
+    plt.show()
+    #plt.close()
 
-    return percentages, plot_all_together, plot_single
+    return percentages
 
 
 def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
@@ -177,11 +179,13 @@ def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
     plot_all_together(percentages, all_fish, plot_name)
     #plt.show()
     plt.close()
-    plot_single(percentages, all_fish, plot_name_single)
+
+    tag = "dont use vertical lines" # this tag is for filtering out a graphic add, which is sensless here
+    plot_single(percentages, all_fish, plot_name_single, tag)
     #plt.show()
     plt.close()
 
-    return percentages, plot_all_together, plot_single
+    return percentages
 
 
 def fish_regression(fish, flattened_fish, percentages, plot_name_single):
@@ -211,6 +215,7 @@ def fish_regression(fish, flattened_fish, percentages, plot_name_single):
 
     return plt
 
+
 def diverse_statistics(percentages, flattened_fish): # nix funktioniert hier so richtig, lass es mal stehen, weil kein bock
     # those lists need some adjustment, because of the different time periods
     first_day = []
@@ -231,15 +236,62 @@ def diverse_statistics(percentages, flattened_fish): # nix funktioniert hier so 
     return percentages
 
 
-def boxplotting(data_high, data_low, data_mixed):    # unfertig, aktuell dummer scheiß
-    your_highness_list = []
-    a = data_high.values.tolist()
-    b = data_high.iloc[0,0]
-    c = data_high.iloc[0]
-    #your_highness_list.append(b)
-    #data_high.columns["2020albi01"]
+def boxplotting(data_high, data_low, data_mixed):
+    high_test_perc = percentage_creation(data_high)
+    low_test_perc = percentage_creation(data_low)
+    mixed_test_perc = percentage_creation(data_mixed)
 
-    for index, fish in enumerate(data_high.columns):
-        p = p
-    return your_highness_list
+    yr_highness = []
+    for fish in high_test_perc:
+        yr_highness.extend(high_test_perc[fish])
+    
+    yr_lowness = []
+    for fish in low_test_perc:
+        yr_lowness.extend(low_test_perc[fish])
 
+    yr_mixedness = []
+    for fish in mixed_test_perc:
+        yr_mixedness.extend(mixed_test_perc[fish])
+
+    data = [yr_highness, yr_lowness, yr_mixedness]
+    fig, ax = plt.subplots()
+    ax.set_title('comparison of the testing stimuli')
+    ax.boxplot(data)
+    plt.xticks([1, 2, 3], ['high', 'low', 'mixed'])
+    ax.set_ylabel('correct choices in %')
+    plt.savefig("comparison of the testing stimuli.png")
+
+    return plt
+
+def reaction_time_analysis(testing_react_times, testing_data):  # no structure in any way, just puzzled together, not even fitting varibales yet
+    
+    for fish in testing_data.columns:
+        curr_fish_reaction = testing_react_times[fish] # data for the times
+        curr_fish_data = testing_data[fish] # data for the choices
+        for index, day in enumerate(curr_fish_data):
+            correct_trials = []
+            curr_fish_curr_day = curr_fish_data[index]
+            curr_fish_curr_react = curr_fish_reaction[index]
+            if len(curr_fish_curr_react) == 0: # skip the first day(no data)
+                continue
+            for trial_num, trial in enumerate(curr_fish_curr_day):
+                for index, key in enumerate(keys):
+                    df_run = testing_data[key]
+                    for fish in all_fish:
+                        if fish in df_run.columns:
+
+                            curr_data = df_run[fish]
+                            stim_data = df_run["Stimulus"]
+
+                            stim_mixed_index = stim_data[stim_data == 'mixed'].index
+                            if len(stim_mixed_index) == 0:
+                                continue
+                            stim_mixed_data = curr_data[stim_mixed_index]
+                            stim_mixed_data = stim_mixed_data.dropna()
+                            mixed_testing_dataframe.at[index, fish] = stim_mixed_data
+
+                    if trial == 1:
+                        correct_trials.append(curr_fish_curr_react[trial_num])
+            correct_react_times.at[index, fish] = correct_trials
+
+    return plt
