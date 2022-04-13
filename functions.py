@@ -1,3 +1,4 @@
+from time import time
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -263,35 +264,45 @@ def boxplotting(data_high, data_low, data_mixed):
 
     return plt
 
-def reaction_time_analysis(testing_react_times, testing_data):  # no structure in any way, just puzzled together, not even fitting varibales yet
-    
-    for fish in testing_data.columns:
-        curr_fish_reaction = testing_react_times[fish] # data for the times
-        curr_fish_data = testing_data[fish] # data for the choices
-        for index, day in enumerate(curr_fish_data):
-            correct_trials = []
-            curr_fish_curr_day = curr_fish_data[index]
-            curr_fish_curr_react = curr_fish_reaction[index]
-            if len(curr_fish_curr_react) == 0: # skip the first day(no data)
-                continue
-            for trial_num, trial in enumerate(curr_fish_curr_day):
-                for index, key in enumerate(keys):
-                    df_run = testing_data[key]
-                    for fish in all_fish:
-                        if fish in df_run.columns:
+def reaction_time_analysis(times, data, stim):
+    # each frame contains a needed information: the data, the reaction times and the used stimuli
+    times
+    data
+    stim
+    high_react_ls = []
+    for fish in data.columns:
+        for index in data.index:
+            if index == 0:
+                continue 
+            curr_data = data[fish][index]
+            curr_times = times[fish][index]
+            curr_stim = stim[fish][index]
 
-                            curr_data = df_run[fish]
-                            stim_data = df_run["Stimulus"]
+            arr_data = np.array(curr_data)
+            arr_times = np.array(curr_times)
+            arr_stim = np.array(curr_stim)
 
-                            stim_mixed_index = stim_data[stim_data == 'mixed'].index
-                            if len(stim_mixed_index) == 0:
-                                continue
-                            stim_mixed_data = curr_data[stim_mixed_index]
-                            stim_mixed_data = stim_mixed_data.dropna()
-                            mixed_testing_dataframe.at[index, fish] = stim_mixed_data
+            high_data = arr_data[arr_stim == "high"]
+            high_times = arr_times[arr_stim == "high"]
+            high_stim = arr_stim[arr_stim == "high"]
+            
+            right_high_times = high_times[high_data == 1]
+            print(right_high_times)
+            high_react_ls.append(right_high_times)
 
-                    if trial == 1:
-                        correct_trials.append(curr_fish_curr_react[trial_num])
-            correct_react_times.at[index, fish] = correct_trials
+
+
+
+        """
+        print("here")
+        for index, day in enumerate(curr_data):
+            
+            #curr_data_currer = curr_data[index]
+            curr_times = curr_times[index]
+            curr_stim = curr_stim[index]
+            if curr_data[index] == 1:
+                if curr_stim[index] == "high":
+                    high_react_ls.append(times[index])
+        """
 
     return plt

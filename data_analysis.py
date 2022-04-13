@@ -18,12 +18,17 @@ testing_low_data = pd.read_hdf("testing_low_dataframe.hf")
 testing_high_data = pd.read_hdf("testing_high_dataframe.hf")
 testing_mixed_data = pd.read_hdf("testing_mixed_dataframe.hf")
 testing_react_times = pd.read_hdf("testing_reaction_time_dataframe.hf")
+corr_test_react_times = pd.read_hdf("correct_testing_react_time_dataframe.hf")
+testing_stim_frame = pd.read_hdf("testing_stim_frame.hf")
 
 all_fish = np.array(training_data.columns)
 percentages = percentage_creation(training_data)
 
+
+
 """
-all fish - all data
+"""
+# all fish - all data
 """
 # fish plots
 plot_name = "All fish, high and low frequent stimuli"
@@ -39,7 +44,7 @@ plt.show()
 
 
 """
-using only low/high data
+# using only low/high data
 """
 plot_name = "All fish, low frequent stimuli"
 plot_name_single = ", low frequent stimuli"
@@ -50,7 +55,7 @@ plot_name_single = ", high frequent stimuli"
 high_data_use(training_high_data, all_fish, plot_name, plot_name_single)
 
 """
-logistic regression
+# logistic regression
 """
 # low data use
 plot_name_single = ", logistic regression with low frequent stimuli"
@@ -67,14 +72,14 @@ for fish in all_fish:
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
     #plt.show()
     plt.close()
-
 """
-testing analysis
 """
-boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
-plt.show()
+# testing analysis
+"""
+#boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
+#plt.show()
 
-reaction_time_analysis(testing_react_times, testing_data)
+reaction_time_analysis(testing_react_times, testing_data, testing_stim_frame)
 
 
 """

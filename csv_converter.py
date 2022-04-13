@@ -218,7 +218,13 @@ for fish in testing_dataframe.columns:
                 correct_trials.append(curr_fish_curr_react[trial_num])
         correct_reactions_dataframe.at[index, fish] = correct_trials
 
-correct_reactions_dataframe.to_hdf("testing_reaction_time_dataframe.hf", key="df")
+correct_reactions_dataframe.to_hdf("correct_testing_react_time_dataframe.hf", key="df")
 
-embed()
-quit()
+testing_stim_frame = pd.DataFrame(index=np.arange(len(keys)), columns=all_fish)
+for fish in all_fish: # to create a column für every fish, but its always the same for each fish anyway
+    for index, key in enumerate(keys):
+        df_run = df[key]
+        curr_data = df_run["Stimulus"]
+        testing_stim_frame.at[index, fish] = curr_data
+
+testing_stim_frame.to_hdf("testing_stim_frame.hf", key="df")
