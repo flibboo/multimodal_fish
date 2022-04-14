@@ -266,14 +266,15 @@ def boxplotting(data_high, data_low, data_mixed):
 
 def reaction_time_analysis(times, data, stim):
     # each frame contains a needed information: the data, the reaction times and the used stimuli
-    times
-    data
-    stim
     high_react_ls = []
+    low_react_ls = []
+    mixed_react_ls = []
+
     for fish in data.columns:
         for index in data.index:
-            if index == 0:
+            if index == 0: # for skipping the first testing day (no time data)
                 continue 
+            # getting the data for one fish
             curr_data = data[fish][index]
             curr_times = times[fish][index]
             curr_stim = stim[fish][index]
@@ -282,27 +283,37 @@ def reaction_time_analysis(times, data, stim):
             arr_times = np.array(curr_times)
             arr_stim = np.array(curr_stim)
 
-            high_data = arr_data[arr_stim == "high"]
+            # high stim
+            high_data = arr_data[arr_stim == "high"] # only the choices where the stim was high
             high_times = arr_times[arr_stim == "high"]
             high_stim = arr_stim[arr_stim == "high"]
             
-            right_high_times = high_times[high_data == 1]
-            print(right_high_times)
-            high_react_ls.append(right_high_times)
+            right_high_times = high_times[high_data == 1] # only the times where the fish choices where correct
+            high_react_ls.extend(right_high_times)
 
-
-
-
-        """
-        print("here")
-        for index, day in enumerate(curr_data):
+            # low stim
+            low_data = arr_data[arr_stim == "low"]
+            low_times = arr_times[arr_stim == "low"]
+            low_stim = arr_stim[arr_stim == "low"]
             
-            #curr_data_currer = curr_data[index]
-            curr_times = curr_times[index]
-            curr_stim = curr_stim[index]
-            if curr_data[index] == 1:
-                if curr_stim[index] == "high":
-                    high_react_ls.append(times[index])
-        """
+            right_low_times = low_times[low_data == 1]
+            low_react_ls.extend(right_low_times)
+
+            # mixed stim
+            mixed_data = arr_data[arr_stim == "mixed"]
+            mixed_times = arr_times[arr_stim == "mixed"]
+            mixed_stim = arr_stim[arr_stim == "mixed"]
+            
+            right_mixed_times = mixed_times[mixed_data == 1]
+            mixed_react_ls.extend(right_mixed_times)
+        
+    data = [high_react_ls, low_react_ls, mixed_react_ls]
+    fig, ax = plt.subplots(figsize = (11,8))
+    ax.set_title('comparison of the testing stimuli in reaction time', fontsize = 13)
+    ax.boxplot(data)
+    plt.xticks([1, 2, 3], ['high', 'low', 'mixed'], fontsize = 12)
+    ax.set_ylabel('reaction time [s]', fontsize = 12)
+
+    plt.savefig("comparison of the testing stimuli in reaction time.svg")
 
     return plt

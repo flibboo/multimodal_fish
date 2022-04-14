@@ -80,7 +80,7 @@ for fish in all_fish:
 #plt.show()
 
 reaction_time_analysis(testing_react_times, testing_data, testing_stim_frame)
-
+plt.show()
 
 """
 other statistics
