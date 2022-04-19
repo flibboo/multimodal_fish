@@ -5,6 +5,7 @@ from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
 import statistics
 from scipy import stats
+import scipy as sc
 from IPython import embed
 
 
@@ -31,7 +32,6 @@ def percentage_creation(dataframe):
                 curr_date_data_len = len(curr_date_data)
                 l.append(np.round((np.sum(curr_date_data) / curr_date_data_len),3))
         percentages.update({dkey: l})
-
     return percentages
 
 
@@ -178,13 +178,13 @@ def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
 def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_high_data)
     plot_all_together(percentages, all_fish, plot_name)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
     tag = "dont use vertical lines" # this tag is for filtering out a graphic add, which is sensless here
     plot_single(percentages, all_fish, plot_name_single, tag)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
     return percentages
 
@@ -244,20 +244,35 @@ def boxplotting(data_high, data_low, data_mixed):
 
     yr_highness = []
     for fish in high_test_perc:
+        if fish == "perc_2020albi03":
+            continue
         yr_highness.extend(high_test_perc[fish])
     
     yr_lowness = []
     for fish in low_test_perc:
+        if fish == "perc_2020albi03":
+            continue
         yr_lowness.extend(low_test_perc[fish])
 
     yr_mixedness = []
     for fish in mixed_test_perc:
+        if fish == "perc_2020albi03":
+            continue
         yr_mixedness.extend(mixed_test_perc[fish])
+
+    yr_mixedness = np.array(yr_mixedness)
+    yr_mixedness = yr_mixedness[yr_mixedness > 0.3]
+
 
     data = [yr_highness, yr_lowness, yr_mixedness]
     fig, ax = plt.subplots()
     ax.set_title('comparison of the testing stimuli')
     ax.boxplot(data)
+    results = ax.boxplot(data)
+    plt.show()
+    sc.stats.ttest_ind(yr_highness, yr_mixedness)
+    embed()
+    quit()
     plt.xticks([1, 2, 3], ['high', 'low', 'mixed'])
     ax.set_ylabel('correct choices in %')
     plt.savefig("comparison of the testing stimuli.png")
@@ -308,7 +323,7 @@ def reaction_time_analysis(times, data, stim):
             mixed_react_ls.extend(right_mixed_times)
         
     data = [high_react_ls, low_react_ls, mixed_react_ls]
-    fig, ax = plt.subplots(figsize = (11,8))
+    fig, ax = plt.subplots(figsize=(11, 8))
     ax.set_title('comparison of the testing stimuli in reaction time', fontsize = 13)
     ax.boxplot(data)
     plt.xticks([1, 2, 3], ['high', 'low', 'mixed'], fontsize = 12)

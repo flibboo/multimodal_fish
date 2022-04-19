@@ -221,7 +221,7 @@ for fish in testing_dataframe.columns:
 correct_reactions_dataframe.to_hdf("correct_testing_react_time_dataframe.hf", key="df")
 
 testing_stim_frame = pd.DataFrame(index=np.arange(len(keys)), columns=all_fish)
-for fish in all_fish: # to create a column für every fish, but its always the same for each fish anyway
+for fish in all_fish: # to create a column for every fish, but its always the same for each fish anyway
     for index, key in enumerate(keys):
         df_run = df[key]
         curr_data = df_run["Stimulus"]

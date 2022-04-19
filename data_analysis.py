@@ -26,7 +26,7 @@ percentages = percentage_creation(training_data)
 
 
 
-"""
+
 """
 # all fish - all data
 """
@@ -62,22 +62,22 @@ plot_name_single = ", logistic regression with low frequent stimuli"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_low_data)
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
 # high data use
 plot_name_single = ", logistic regression with high frequent stimuli"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_high_data)
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 """
-"""
+
 # testing analysis
 """
-#boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
-#plt.show()
+boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
+plt.show()
 
 reaction_time_analysis(testing_react_times, testing_data, testing_stim_frame)
 plt.show()
