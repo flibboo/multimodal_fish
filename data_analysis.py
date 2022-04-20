@@ -33,14 +33,16 @@ percentages = percentage_creation(training_data)
 # fish plots
 plot_name = "All fish, high and low frequent stimuli"
 plot_all_together(percentages, all_fish, plot_name)
-plt.show()
-#plt.close()
+#plt.show()
+plt.close()
 
 plot_name_single = ", high and low frequent stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
 plot_single(percentages, all_fish, plot_name_single, tag)
-plt.show()
-#plt.close()
+#plt.show()
+plt.close()
+
+plt.close()
 
 
 """
@@ -62,16 +64,16 @@ plot_name_single = ", logistic regression with low frequent stimuli"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_low_data)
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
-    plt.show()
-    #plt.close()
+    #plt.show()
+    plt.close()
 
 # high data use
 plot_name_single = ", logistic regression with high frequent stimuli"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_high_data)
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
-    plt.show()
-    #plt.close()
+    #plt.show()
+    plt.close()
 """
 
 # testing analysis
@@ -85,4 +87,4 @@ plt.show()
 """
 other statistics
 """
-diverse_statistics(percentages, flattened_fish)
+diverse_statistics(percentages, flattened_fish, testing_mixed_data, testing_high_data, testing_low_data)
