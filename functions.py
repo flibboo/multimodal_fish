@@ -132,11 +132,18 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
         """
         m_1, b_1 = np.polyfit(x, y, 1)
         ax.plot(x, m_1 * time_array + b_1, linewidth=2)
-        print("%s slope:" % fish, m_1)
+        #print("%s slope:" % fish, m_1)
+
+        # Pearson for R & p-Value
+        r, p = np.round(sc.stats.pearsonr(x,y), 4)
+        ax.text(30, 1.01, "R: %s  p: %s" % (r, p))
+        
+        # 50% line
+        x_more = [0] + time_list + [len(curr_data)+1]
+        ax.plot(x_more, ([0.5]*len(x_more)), linewidth= 0.5, linestyle='--', color="grey")
 
         if tag == "use vertical lines":
-            # vertical lines for the different training/test phases
-            # if statements for different igh training days
+            # if statements for different training days
             if fish == "2020albi01": fish_num = 15
             if fish == "2020albi02": fish_num = 19
             if fish == "2020albi03": fish_num = 20
@@ -145,10 +152,10 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
             if fish == "2020albi06": fish_num = 16
 
             x = 7  # first training days
-            plt.axvline(x, color="lightgrey")  # first days mixed (7 days)
-            plt.axvline(x=(fish_num + x), color="lightgrey")  # only high training (equals fish_num)
-            plt.axvline(x=(fish_num + x + 17), color="lightgrey")  # only low training (17 days)
-            plt.axvline(x=(fish_num + x + 17 + 3), color="lightgrey")  # low + high training (3 days)
+            plt.axvline(x, color="lightgrey", linestyle=':')  # first days mixed (7 days)
+            plt.axvline(x=(fish_num + x), color="lightgrey", linestyle=':')  # only high training (equals fish_num)
+            plt.axvline(x=(fish_num + x + 17), color="lightgrey", linestyle=':')  # only low training (17 days)
+            plt.axvline(x=(fish_num + x + 17 + 3), color="lightgrey", linestyle=':')  # low + high training (3 days)
 
         ax.set_xlabel('days')
         ax.set_ylabel('correct choices in %')
@@ -256,7 +263,7 @@ def boxplotting(data_high, data_low, data_mixed):
 
     yr_highness = []
     for fish in high_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+        if fish == "perc_2020albi05" or fish == "perc_2020albi06": # can be skipped, if all fish should be included
             yr_highness.extend(high_test_perc[fish])
 
 
@@ -294,7 +301,7 @@ def reaction_time_analysis(times, data, stim):
     mixed_react_ls = []
 
     for fish in data.columns:
-        if fish == "2020albi05" or fish == "2020albi06":
+        if fish == "2020albi05" or fish == "2020albi06": # can be skipped, if all fish should be included
             for index in data.index:
                 if index == 0:  # for skipping the first testing day (no time data)
                     continue

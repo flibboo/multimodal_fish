@@ -39,8 +39,8 @@ plt.close()
 plot_name_single = ", high and low frequent stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
 plot_single(percentages, all_fish, plot_name_single, tag)
-#plt.show()
-plt.close()
+plt.show()
+#plt.close()
 
 plt.close()
 
@@ -74,9 +74,9 @@ for fish in all_fish:
     fish_regression(fish, flattened_fish, percentages, plot_name_single)
     #plt.show()
     plt.close()
-"""
 
-# testing analysis
+"""
+testing analysis
 """
 boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
 plt.show()
