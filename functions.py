@@ -108,11 +108,19 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
         time_list = list(range(1, (time + 1)))
         time_array = np.array(time_list)
 
-        fig, ax = plt.subplots()
-        ax.plot(time_list, curr_data)
+        fig, ax = plt.subplots(1 ,2, figsize=(15,15), gridspec_kw={'width_ratios': [3, 1]})
+        ax[0].plot(time_list, curr_data)
+        ax[0].spines['top'].set_visible(False)
+        ax[0].spines['right'].set_visible(False)
+
         y = curr_data
         x = time_list
         N = time
+
+        m_1, b_1 = np.polyfit(x, y, 1)
+        ax[0].plot(x, m_1 * time_array + b_1, linewidth=2)
+        #print("%s slope:" % fish, m_1)
+
         """
         brauche ich grade nicht(aber falls doch bleibts hier)
         
@@ -130,18 +138,15 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
         ax.plot(time_list, line_calc, "black", linewidth=0.8)
         # print('y =', m, 'x +', b)
         """
-        m_1, b_1 = np.polyfit(x, y, 1)
-        ax.plot(x, m_1 * time_array + b_1, linewidth=2)
-        #print("%s slope:" % fish, m_1)
+
+        # 50% line
+        x_more = [0] + time_list + [len(curr_data)+1] # so that the line goes through the whole graph
+        ax[0].plot(x_more, ([0.5]*len(x_more)), linewidth= 0.5, linestyle='--', color="grey")
 
         # Pearson for R & p-Value
         r, p = np.round(sc.stats.pearsonr(x,y), 4)
-        ax.text(30, 1.01, "R: %s  p: %s" % (r, p))
+        ax[0].text(5, 0.1, "R: %s  p: %s" % (r, p), bbox=dict(boxstyle = "square", facecolor = "white"), ha='center', va='center')
         
-        # 50% line
-        x_more = [0] + time_list + [len(curr_data)+1]
-        ax.plot(x_more, ([0.5]*len(x_more)), linewidth= 0.5, linestyle='--', color="grey")
-
         if tag == "use vertical lines":
             # if statements for different training days
             if fish == "2020albi01": fish_num = 15
@@ -152,16 +157,32 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
             if fish == "2020albi06": fish_num = 16
 
             x = 7  # first training days
-            plt.axvline(x, color="lightgrey", linestyle=':')  # first days mixed (7 days)
-            plt.axvline(x=(fish_num + x), color="lightgrey", linestyle=':')  # only high training (equals fish_num)
-            plt.axvline(x=(fish_num + x + 17), color="lightgrey", linestyle=':')  # only low training (17 days)
-            plt.axvline(x=(fish_num + x + 17 + 3), color="lightgrey", linestyle=':')  # low + high training (3 days)
+            ax[0].axvline(x, color="lightgrey", linestyle=':')  # first days mixed (7 days)
+            ax[0].axvline(x=(fish_num + x), color="lightgrey", linestyle=':')  # only high training (equals fish_num)
+            ax[0].axvline(x=(fish_num + x + 17), color="lightgrey", linestyle=':')  # only low training (17 days)
+            ax[0].axvline(x=(fish_num + x + 17 + 3), color="lightgrey", linestyle=':')  # low + high training (3 days)
 
-        ax.set_xlabel('days')
-        ax.set_ylabel('correct choices in %')
-        ax.set_xlim([0, (time + 1)])
-        ax.set_ylim([0, 1.05])
-        plt.title("%s %s" % (fish, plot_name_single))
+        ax[0].set_xlabel('days')
+        ax[0].set_ylabel('correct choices in %')
+        ax[0].set_xlim([0, (time + 1)])
+        ax[0].set_ylim([0, 1.05])
+        ax[0].yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
+        ax[0].set_title("%s %s" % (fish, plot_name_single))
+
+        # boxplot 
+
+        ax[1].boxplot(curr_data)
+        ax[1].get_xaxis().set_ticks([])
+        ax[1].yaxis.set_label_position("right")
+        ax[1].yaxis.tick_right()
+        ax[1].set_ylabel('correct choices in %')
+        ax[1].yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
+        ax[1].spines['left'].set_visible(False)
+        ax[1].spines['top'].set_visible(False)
+        ax[1].set_ylim([0, 1.05])
+        
+
+        plt.subplots_adjust(wspace=0.2, hspace=0.2)
 
     return plt
 
@@ -170,13 +191,13 @@ def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_low_data)
 
     plot_all_together(percentages, all_fish, plot_name)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
     tag = "dont use vertical lines"  # this tag is for filtering out a graphic add, which is sensless here
     plot_single(percentages, all_fish, plot_name_single, tag)
-    #plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
     return percentages
 
@@ -184,13 +205,13 @@ def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
 def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
     percentages = percentage_creation(training_high_data)
     plot_all_together(percentages, all_fish, plot_name)
-    # plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
     tag = "dont use vertical lines"  # this tag is for filtering out a graphic add, which is sensless here
     plot_single(percentages, all_fish, plot_name_single, tag)
-    # plt.show()
-    plt.close()
+    plt.show()
+    #plt.close()
 
     return percentages
 

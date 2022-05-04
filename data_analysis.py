@@ -5,7 +5,7 @@ import numpy as np
 from functions import *
 
 """
-Open file
+# Open file
 """
 # training files
 training_data = pd.read_hdf("training_dataframe.hf")
@@ -24,17 +24,14 @@ testing_stim_frame = pd.read_hdf("testing_stim_frame.hf")
 all_fish = np.array(training_data.columns)
 percentages = percentage_creation(training_data)
 
-
-
-
 """
 # all fish - all data
 """
 # fish plots
 plot_name = "All fish, high and low frequent stimuli"
 plot_all_together(percentages, all_fish, plot_name)
-#plt.show()
-plt.close()
+plt.show()
+#plt.close()
 
 plot_name_single = ", high and low frequent stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
@@ -42,8 +39,7 @@ plot_single(percentages, all_fish, plot_name_single, tag)
 plt.show()
 #plt.close()
 
-plt.close()
-
+#plt.close()
 
 """
 # using only low/high data
@@ -63,20 +59,20 @@ high_data_use(training_high_data, all_fish, plot_name, plot_name_single)
 plot_name_single = ", logistic regression with low frequent stimuli"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_low_data)
-    fish_regression(fish, flattened_fish, percentages, plot_name_single)
+    #fish_regression(fish, flattened_fish, percentages, plot_name_single)
     #plt.show()
-    plt.close()
+    #plt.close()
 
 # high data use
 plot_name_single = ", logistic regression with high frequent stimuli"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_high_data)
-    fish_regression(fish, flattened_fish, percentages, plot_name_single)
+    #fish_regression(fish, flattened_fish, percentages, plot_name_single)
     #plt.show()
-    plt.close()
+    #plt.close()
 
 """
-testing analysis
+# testing analysis
 """
 boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
 plt.show()
@@ -85,6 +81,6 @@ reaction_time_analysis(testing_react_times, testing_data, testing_stim_frame)
 plt.show()
 
 """
-other statistics
+# other statistics
 """
-diverse_statistics(percentages, flattened_fish, testing_mixed_data, testing_high_data, testing_low_data)
+#diverse_statistics(percentages, flattened_fish, testing_mixed_data, testing_high_data, testing_low_data)
