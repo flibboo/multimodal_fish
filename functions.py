@@ -34,6 +34,49 @@ def percentage_creation(dataframe):
         percentages.update({dkey: l})
     return percentages
 
+def binomial_data(low_frame, high_frame):
+    bino_low_frame = {}
+    bino_high_frame = {}
+
+    for name in low_frame.columns:
+        temp_correct = []
+        temp_trials = []
+        dkey = 'bino_%s' % name
+        curr_fish_data = low_frame[name]
+        for index, date in enumerate(curr_fish_data):
+            curr_date_data = curr_fish_data.iloc[index]
+            if str(curr_date_data) != 'nan':
+                curr_date_data = curr_date_data.dropna()
+                curr_date_data_len = len(curr_date_data)
+                temp_correct.append(np.sum(curr_date_data))
+                temp_trials.append(curr_date_data_len)
+        temp_c = np.add.reduceat(temp_correct, np.arange(0, len(temp_correct), 3)) # gets tuple of 3 and sums them
+        temp_t = np.add.reduceat(temp_trials, np.arange(0, len(temp_trials), 3))
+        bino_low_list = []
+        for index, thirds in enumerate(temp_c): # makes a binomal test for every 3 days
+            bino_low_list.append(np.round(sc.stats.binom_test(x=temp_c[index], n=temp_t[index], p=0.5),3))
+            bino_low_frame.update({dkey: bino_low_list})
+
+    for name in high_frame.columns:
+        temp_correct = []
+        temp_trials = []
+        dkey = 'bino_%s' % name
+        curr_fish_data = high_frame[name]
+        for index, date in enumerate(curr_fish_data):
+            curr_date_data = curr_fish_data.iloc[index]
+            if str(curr_date_data) != 'nan':
+                curr_date_data = curr_date_data.dropna()
+                curr_date_data_len = len(curr_date_data)
+                temp_correct.append(np.sum(curr_date_data))
+                temp_trials.append(curr_date_data_len)
+        temp_c = np.add.reduceat(temp_correct, np.arange(0, len(temp_correct), 3)) # gets tuple of 3 and sums them
+        temp_t = np.add.reduceat(temp_trials, np.arange(0, len(temp_trials), 3))
+        bino_high_list = []
+        for index, thirds in enumerate(temp_c): # makes a binomal test for every 3 days
+            bino_high_list.append(np.round(sc.stats.binom_test(x=temp_c[index], n=temp_t[index], p=0.5),3))
+            bino_high_frame.update({dkey: bino_high_list})
+
+    return bino_low_frame, bino_high_frame
 
 def plot_all_together(percentages, all_fish, plot_name):
     fig, ax = plt.subplots()
@@ -101,7 +144,7 @@ def plot_all_together(percentages, all_fish, plot_name):
     return plt
 
 
-def plot_single(percentages, all_fish, plot_name_single, tag):
+def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high):
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
@@ -118,26 +161,8 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
         N = time
 
         m_1, b_1 = np.polyfit(x, y, 1)
-        ax[0].plot(x, m_1 * time_array + b_1, linewidth=2)
+        ax[0].plot(x, m_1 * time_array + b_1, linewidth=1.5)
         #print("%s slope:" % fish, m_1)
-
-        """
-        brauche ich grade nicht(aber falls doch bleibts hier)
-        
-        # linear regression (handmade)
-        
-        E_xy = sum([a * b for a, b in zip(y, x)])
-        E_x = sum(x)
-        E_y = sum(y)
-        E_x_2 = sum([a * b for a, b in zip(x, x)])
-
-        m = (((N * E_xy) - (E_x * E_y)) / ((N * E_x_2) - (E_x * E_x)))
-        b = (E_y - (m * E_x)) / N
-
-        line_calc = [m * x_l + b for x_l in time_list]
-        ax.plot(time_list, line_calc, "black", linewidth=0.8)
-        # print('y =', m, 'x +', b)
-        """
 
         # 50% line
         x_more = [0] + time_list + [len(curr_data)+1] # so that the line goes through the whole graph
@@ -169,6 +194,19 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
         ax[0].yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
         ax[0].set_title("%s %s" % (fish, plot_name_single))
 
+        # binomial visualisation, but only for high and low data
+        if tag == "low use, no vert lines": # just used the tag because its only with high/low functions
+            #binomial_dataframe_low
+            ax[0] = plt.gca()   # gives the current axis
+            ax[2] = ax[0].twiny() 
+            ax[2].xaxis.set_ticks(binomial_dataframe_low)
+
+        """
+        if tag == "high use, no vert lines": 
+            binomial_dataframe_high
+            axes1 = axes1 = plt.gca()
+            axes2 = axes1.twiny()
+        """
         # boxplot 
 
         ax[1].boxplot(curr_data)
@@ -179,6 +217,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
         ax[1].yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
         ax[1].spines['left'].set_visible(False)
         ax[1].spines['top'].set_visible(False)
+        ax[1].spines['bottom'].set_visible(False)
         ax[1].set_ylim([0, 1.05])
         
 
@@ -187,29 +226,29 @@ def plot_single(percentages, all_fish, plot_name_single, tag):
     return plt
 
 
-def low_data_use(training_low_data, all_fish, plot_name, plot_name_single):
+def low_data_use(training_low_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high):
     percentages = percentage_creation(training_low_data)
 
     plot_all_together(percentages, all_fish, plot_name)
     plt.show()
     #plt.close()
 
-    tag = "dont use vertical lines"  # this tag is for filtering out a graphic add, which is sensless here
-    plot_single(percentages, all_fish, plot_name_single, tag)
+    tag = "low use, no vert lines"  # this tag is for filtering out a graphic add, which is sensless here
+    plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
     plt.show()
     #plt.close()
 
     return percentages
 
 
-def high_data_use(training_high_data, all_fish, plot_name, plot_name_single):
+def high_data_use(training_high_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high):
     percentages = percentage_creation(training_high_data)
     plot_all_together(percentages, all_fish, plot_name)
     plt.show()
     #plt.close()
 
-    tag = "dont use vertical lines"  # this tag is for filtering out a graphic add, which is sensless here
-    plot_single(percentages, all_fish, plot_name_single, tag)
+    tag = "high use, no vert lines"  # this tag is for filtering out a graphic add, which is sensless here
+    plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
     plt.show()
     #plt.close()
 

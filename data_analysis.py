@@ -23,6 +23,7 @@ testing_stim_frame = pd.read_hdf("testing_stim_frame.hf")
 
 all_fish = np.array(training_data.columns)
 percentages = percentage_creation(training_data)
+binomial_dataframe_low, binomial_dataframe_high = binomial_data(training_low_data, training_high_data)
 
 """
 # all fish - all data
@@ -35,7 +36,7 @@ plt.show()
 
 plot_name_single = ", high and low frequent stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
-plot_single(percentages, all_fish, plot_name_single, tag)
+plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
 plt.show()
 #plt.close()
 
@@ -46,11 +47,11 @@ plt.show()
 """
 plot_name = "All fish, low frequent stimuli"
 plot_name_single = ", low frequent stimuli"
-low_data_use(training_low_data, all_fish, plot_name, plot_name_single)
+low_data_use(training_low_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
 
 plot_name = "All fish, high frequent stimuli"
 plot_name_single = ", high frequent stimuli"
-high_data_use(training_high_data, all_fish, plot_name, plot_name_single)
+high_data_use(training_high_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
 
 """
 # logistic regression
