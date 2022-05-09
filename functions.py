@@ -94,7 +94,7 @@ def plot_all_together(percentages, all_fish, plot_name):
         time_array = np.array(time)
         time_list = list(range(1, (time + 1)))
 
-        ax.plot(time_list, curr_data, "lightgrey", linewidth=0.8)
+        ax.plot(time_list, curr_data, "lightgrey", linewidth=0.7)
         x = time_list
         N = time
 
@@ -109,7 +109,7 @@ def plot_all_together(percentages, all_fish, plot_name):
         b = (E_y - (m * E_x)) / N
         line_calc = [m * x_l + b for x_l in time_list]
 
-        ax.plot(time_list, line_calc, "lightgrey", linewidth=0.8)
+        ax.plot(time_list, line_calc, "powderblue", linewidth=0.7)
         # print('y =', m, 'x +', b)
 
         # summed axes
@@ -133,7 +133,7 @@ def plot_all_together(percentages, all_fish, plot_name):
 
     line_calc = [m_median * x_l + b_median for x_l in time_list]  # loop is for multiplying lists
 
-    ax.plot(time_list, line_calc, "black", linewidth=2)
+    ax.plot(time_list, line_calc, "darkviolet", linewidth=2)
 
     ax.set_xlabel('days')
     ax.set_ylabel('correct choices in %')
@@ -151,6 +151,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
 
     for fish in all_fish:
+        print(fish, tag)
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
         time_list = list(range(1, (time + 1)))
@@ -224,7 +225,6 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
 
         if tag == "high use, no vert lines": 
-            binomial_dataframe_high
             ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
             ax[0].text(1.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][0], ha='center', va='center')
             ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
@@ -247,7 +247,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
                 ax[0].axvline(x = 30, ymin = 0.88, ymax = 0.9)
                 ax[0].text(28.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][9], ha='center', va='center')
             except:
-                continue
+                print("dayum where is my data?")
             ax[0].text((time/2), 1.15, "binomial values over 3 days", ha='center', va='center')
 
         # boxplot 
@@ -262,6 +262,8 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax[1].spines['top'].set_visible(False)
         ax[1].spines['bottom'].set_visible(False)
         ax[1].set_ylim([0, y_lims_single])
+
+        
 
         plt.subplots_adjust(wspace=0.2, hspace=0.2)
 
