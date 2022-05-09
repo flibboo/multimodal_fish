@@ -26,6 +26,7 @@ percentages = percentage_creation(training_data)
 binomial_dataframe_low, binomial_dataframe_high = binomial_data(training_low_data, training_high_data)
 
 """
+"""
 # all fish - all data
 """
 # fish plots
@@ -41,7 +42,7 @@ plt.show()
 #plt.close()
 
 #plt.close()
-
+"""
 """
 # using only low/high data
 """

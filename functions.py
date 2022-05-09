@@ -145,6 +145,11 @@ def plot_all_together(percentages, all_fish, plot_name):
 
 
 def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high):
+    # universal plot variables
+    y_lims_single = 1.2
+    y_ticks_single = 1.05
+
+
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
@@ -190,23 +195,61 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax[0].set_xlabel('days')
         ax[0].set_ylabel('correct choices in %')
         ax[0].set_xlim([0, (time + 1)])
-        ax[0].set_ylim([0, 1.05])
-        ax[0].yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
+        ax[0].set_ylim([0, y_lims_single])
+        ax[0].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
         ax[0].set_title("%s %s" % (fish, plot_name_single))
 
         # binomial visualisation, but only for high and low data
-        if tag == "low use, no vert lines": # just used the tag because its only with high/low functions
-            #binomial_dataframe_low
-            ax[0] = plt.gca()   # gives the current axis
-            ax[2] = ax[0].twiny() 
-            ax[2].xaxis.set_ticks(binomial_dataframe_low)
+        if tag == "low use, no vert lines": # just used the tag because its only with high/low function
+            ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
+            ax[0].text(1.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][0], ha='center', va='center')
+            ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
+            ax[0].text(4.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][1], ha='center', va='center')
+            ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
+            ax[0].text(7.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][2], ha='center', va='center')
+            ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
+            ax[0].text(10.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][3], ha='center', va='center')
+            ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
+            ax[0].text(13.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][4], ha='center', va='center')
+            ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
+            ax[0].text(16.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][5], ha='center', va='center')
+            ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
+            ax[0].text(19.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][6], ha='center', va='center')
+            ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
+            ax[0].text(22.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][7], ha='center', va='center')
+            ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
+            ax[0].text(25.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][8], ha='center', va='center')
 
-        """
+            ax[0].text((time/2), 1.15, "binomial values over 3 days", ha='center', va='center')
+
+
         if tag == "high use, no vert lines": 
             binomial_dataframe_high
-            axes1 = axes1 = plt.gca()
-            axes2 = axes1.twiny()
-        """
+            ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
+            ax[0].text(1.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][0], ha='center', va='center')
+            ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
+            ax[0].text(4.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][1], ha='center', va='center')
+            ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
+            ax[0].text(7.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][2], ha='center', va='center')
+            ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
+            ax[0].text(10.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][3], ha='center', va='center')
+            ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
+            ax[0].text(13.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][4], ha='center', va='center')
+            ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
+            ax[0].text(16.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][5], ha='center', va='center')
+            ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
+            ax[0].text(19.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][6], ha='center', va='center')
+            ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
+            ax[0].text(22.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][7], ha='center', va='center')
+            ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
+            ax[0].text(25.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][8], ha='center', va='center')
+            try: # needed because not every fish made the same amount of trials
+                ax[0].axvline(x = 30, ymin = 0.88, ymax = 0.9)
+                ax[0].text(28.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][9], ha='center', va='center')
+            except:
+                continue
+            ax[0].text((time/2), 1.15, "binomial values over 3 days", ha='center', va='center')
+
         # boxplot 
 
         ax[1].boxplot(curr_data)
@@ -214,12 +257,11 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax[1].yaxis.set_label_position("right")
         ax[1].yaxis.tick_right()
         ax[1].set_ylabel('correct choices in %')
-        ax[1].yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
+        ax[1].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
         ax[1].spines['left'].set_visible(False)
         ax[1].spines['top'].set_visible(False)
         ax[1].spines['bottom'].set_visible(False)
-        ax[1].set_ylim([0, 1.05])
-        
+        ax[1].set_ylim([0, y_lims_single])
 
         plt.subplots_adjust(wspace=0.2, hspace=0.2)
 
