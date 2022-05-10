@@ -27,38 +27,40 @@ binomial_dataframe_low, binomial_dataframe_high = binomial_data(training_low_dat
 
 """
 """
-# all fish - all data
+# all fish - all data -> dient nur noch zur Anschauung, keinen Wert bei Auswertung
 """
 # fish plots
-plot_name = "All fish, high and low frequent stimuli"
+plot_name = "Alle Fische, hoch- und niederfrequente Stimuli"
 plot_all_together(percentages, all_fish, plot_name)
 plt.show()
 #plt.close()
-
-plot_name_single = ", high and low frequent stimuli"
+"""
+plot_name_single = ", hoch- und niederfrequente Stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
 plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
 plt.show()
+
 #plt.close()
 
 #plt.close()
-"""
+
+
 """
 # using only low/high data
 """
-plot_name = "All fish, low frequent stimuli"
-plot_name_single = ", low frequent stimuli"
+plot_name = "Alle Fische, niederfrequenter Stimulus (10 Hz)"
+plot_name_single = ", niederfrequenter Stimulus (10 Hz)"
 low_data_use(training_low_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
 
-plot_name = "All fish, high frequent stimuli"
-plot_name_single = ", high frequent stimuli"
+plot_name = "Alle Fische, hochfrequenter Stimulus (>1000 Hz)"
+plot_name_single = ", hochfrequenter Stimulus (>1000 Hz)"
 high_data_use(training_high_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
 
 """
-# logistic regression
+# logistic regression -> ich bin leider eine Enttäuschung
 """
 # low data use
-plot_name_single = ", logistic regression with low frequent stimuli"
+plot_name_single = ", logistische Regression mit niederfrequentem Stimulus"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_low_data)
     #fish_regression(fish, flattened_fish, percentages, plot_name_single)
@@ -66,7 +68,7 @@ for fish in all_fish:
     #plt.close()
 
 # high data use
-plot_name_single = ", logistic regression with high frequent stimuli"
+plot_name_single = ", logistic Regression mit hochfrequentem Stimulus"
 for fish in all_fish:
     flattened_fish = flatten_fish(fish, training_high_data)
     #fish_regression(fish, flattened_fish, percentages, plot_name_single)
@@ -85,4 +87,4 @@ plt.show()
 """
 # other statistics
 """
-#diverse_statistics(percentages, flattened_fish, testing_mixed_data, testing_high_data, testing_low_data)
+diverse_statistics(percentages, flattened_fish, testing_mixed_data, testing_high_data, testing_low_data)

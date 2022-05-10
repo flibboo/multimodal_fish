@@ -1,4 +1,5 @@
 from time import time
+from turtle import width
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -79,7 +80,7 @@ def binomial_data(low_frame, high_frame):
     return bino_low_frame, bino_high_frame
 
 def plot_all_together(percentages, all_fish, plot_name):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10,8))
 
     E_xy_sum = []
     E_x_sum = []
@@ -94,7 +95,7 @@ def plot_all_together(percentages, all_fish, plot_name):
         time_array = np.array(time)
         time_list = list(range(1, (time + 1)))
 
-        ax.plot(time_list, curr_data, "lightgrey", linewidth=0.7)
+        ax.plot(time_list, curr_data, "lightgrey", linewidth=0.6)
         x = time_list
         N = time
 
@@ -135,29 +136,30 @@ def plot_all_together(percentages, all_fish, plot_name):
 
     ax.plot(time_list, line_calc, "darkviolet", linewidth=2)
 
-    ax.set_xlabel('days')
-    ax.set_ylabel('correct choices in %')
+    ax.set_xlabel('Tage')
+    ax.set_ylabel('richtige Entscheidungen in %')
     ax.set_xlim([0, (time + 1)])
     ax.set_ylim([0, 1.05])
     plt.title("%s" % plot_name)
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.svg" %plot_name)
 
     return plt
 
 
 def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high):
     # universal plot variables
-    y_lims_single = 1.2
+    y_lims_single = 1.19
     y_ticks_single = 1.05
 
 
     for fish in all_fish:
-        print(fish, tag)
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
         time_list = list(range(1, (time + 1)))
         time_array = np.array(time_list)
 
-        fig, ax = plt.subplots(1 ,2, figsize=(15,15), gridspec_kw={'width_ratios': [3, 1]})
+        fig, ax = plt.subplots(1 ,2, figsize=(10,8), gridspec_kw={'width_ratios': [4, 1]})
+
         ax[0].plot(time_list, curr_data)
         ax[0].spines['top'].set_visible(False)
         ax[0].spines['right'].set_visible(False)
@@ -193,79 +195,81 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
             ax[0].axvline(x=(fish_num + x + 17), color="lightgrey", linestyle=':')  # only low training (17 days)
             ax[0].axvline(x=(fish_num + x + 17 + 3), color="lightgrey", linestyle=':')  # low + high training (3 days)
 
-        ax[0].set_xlabel('days')
-        ax[0].set_ylabel('correct choices in %')
+        ax[0].set_xlabel('Tage')
+        ax[0].set_ylabel('richtige Entscheidungen in %')
         ax[0].set_xlim([0, (time + 1)])
         ax[0].set_ylim([0, y_lims_single])
-        ax[0].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
+        #ax[0].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
         ax[0].set_title("%s %s" % (fish, plot_name_single))
 
         # binomial visualisation, but only for high and low data
         if tag == "low use, no vert lines": # just used the tag because its only with high/low function
             ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
-            ax[0].text(1.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][0], ha='center', va='center')
+            ax[0].text(1.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][0], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][0] < 0.05 else 'normal')
             ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
-            ax[0].text(4.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][1], ha='center', va='center')
+            ax[0].text(4.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][1], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][1] < 0.05 else 'normal')
             ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
-            ax[0].text(7.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][2], ha='center', va='center')
+            ax[0].text(7.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][2], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][2] < 0.05 else 'normal')
             ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
-            ax[0].text(10.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][3], ha='center', va='center')
+            ax[0].text(10.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][3], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][3] < 0.05 else 'normal')
             ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
-            ax[0].text(13.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][4], ha='center', va='center')
+            ax[0].text(13.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][4], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][4] < 0.05 else 'normal')
             ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
-            ax[0].text(16.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][5], ha='center', va='center')
+            ax[0].text(16.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][5], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][5] < 0.05 else 'normal')
             ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
-            ax[0].text(19.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][6], ha='center', va='center')
+            ax[0].text(19.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][6], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][6] < 0.05 else 'normal')
             ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
-            ax[0].text(22.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][7], ha='center', va='center')
+            ax[0].text(22.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][7], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][7] < 0.05 else 'normal')
             ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
-            ax[0].text(25.5, 1.1 ,binomial_dataframe_low["bino_%s" %fish][8], ha='center', va='center')
-
-            ax[0].text((time/2), 1.15, "binomial values over 3 days", ha='center', va='center')
+            ax[0].text(25.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][8], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][8] < 0.05 else 'normal')
+            
+            ax[0].text((time/2), 1.15, "p-Werte über je 3 Tage", ha='center', va='center')
 
 
         if tag == "high use, no vert lines": 
             ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
-            ax[0].text(1.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][0], ha='center', va='center')
+            ax[0].text(1.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][0], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][0] < 0.05 else 'normal')
             ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
-            ax[0].text(4.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][1], ha='center', va='center')
+            ax[0].text(4.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][1], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][1] < 0.05 else 'normal')
             ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
-            ax[0].text(7.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][2], ha='center', va='center')
+            ax[0].text(7.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][2], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][2] < 0.05 else 'normal')
             ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
-            ax[0].text(10.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][3], ha='center', va='center')
+            ax[0].text(10.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][3], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][3] < 0.05 else 'normal')
             ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
-            ax[0].text(13.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][4], ha='center', va='center')
+            ax[0].text(13.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][4], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][4] < 0.05 else 'normal')
             ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
-            ax[0].text(16.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][5], ha='center', va='center')
+            ax[0].text(16.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][5], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][5] < 0.05 else 'normal')
             ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
-            ax[0].text(19.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][6], ha='center', va='center')
+            ax[0].text(19.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][6], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][6] < 0.05 else 'normal')
             ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
-            ax[0].text(22.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][7], ha='center', va='center')
+            ax[0].text(22.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][7], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][7] < 0.05 else 'normal')
             ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
-            ax[0].text(25.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][8], ha='center', va='center')
+            ax[0].text(25.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][8], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][8] < 0.05 else 'normal')
             try: # needed because not every fish made the same amount of trials
                 ax[0].axvline(x = 30, ymin = 0.88, ymax = 0.9)
-                ax[0].text(28.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][9], ha='center', va='center')
+                ax[0].text(28.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][9], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][9] < 0.05 else 'normal')
             except:
-                print("dayum where is my data?")
-            ax[0].text((time/2), 1.15, "binomial values over 3 days", ha='center', va='center')
+                print("Hier könnte Ihre Werbung stehen")
+            ax[0].text((time/2), 1.15, "p-Werte über je 3 Tage", ha='center', va='center')
 
         # boxplot 
 
         ax[1].boxplot(curr_data)
         ax[1].get_xaxis().set_ticks([])
-        ax[1].yaxis.set_label_position("right")
-        ax[1].yaxis.tick_right()
-        ax[1].set_ylabel('correct choices in %')
-        ax[1].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
+        #ax[1].yaxis.set_label_position("right")
+        #ax[1].yaxis.tick_right()
+        #ax[1].set_ylabel('correct choices in %')
+        #ax[1].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
         ax[1].spines['left'].set_visible(False)
         ax[1].spines['top'].set_visible(False)
         ax[1].spines['bottom'].set_visible(False)
+        ax[1].spines['right'].set_visible(False)
         ax[1].set_ylim([0, y_lims_single])
+        ax[1].set_facecolor('none')
+        ax[1].axis('off')
 
-        
-
-        plt.subplots_adjust(wspace=0.2, hspace=0.2)
+        plt.subplots_adjust(wspace=-0.1, hspace=0.2)
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.svg" % (fish, plot_name_single))
 
     return plt
 
@@ -299,66 +303,6 @@ def high_data_use(training_high_data, all_fish, plot_name, plot_name_single, bin
     return percentages
 
 
-def fish_regression(fish, flattened_fish, percentages, plot_name_single):
-    time = len(flattened_fish)
-    for percentage, name in zip(percentages, fish):
-        x_axis = np.arange(time).reshape(-1, 1)
-
-        bool_trial = flattened_fish > 0.7
-        y_axis = bool_trial * 1
-
-        # y_axis = percentages["perc_%s" % fish]
-        # y_axis = flattened_fish
-        # model = LogisticRegression(solver='liblinear', random_state=0)
-        model = LogisticRegression(C=10.0, class_weight=None, dual=False, fit_intercept=True,
-                                   intercept_scaling=1, l1_ratio=None, max_iter=100,
-                                   multi_class='ovr', n_jobs=None, penalty='l2',
-                                   random_state=0, solver='liblinear', tol=0.0001, verbose=0,
-                                   warm_start=False)
-        model.fit(x_axis, y_axis)
-        model.predict_proba(x_axis)  # shows performance of the model
-        model.predict(x_axis)  # shows the predictions
-        # print(model.score(x_axis, y_axis))  # shows the accuracy
-        plt.scatter(x_axis, y_axis)
-        plt.title("%s %s" % (fish, plot_name_single))
-        plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
-
-    return plt
-
-
-def diverse_statistics(percentages, flattened_fish, data_mixed, data_high, data_low):
-    # those lists need some adjustment, because of the different time periods
-    first_day = []
-    last_day = []
-
-    time = len(flattened_fish)
-    time_list = list(range(1, (time + 1)))
-    for percentage in percentages:
-        curr_perc = np.array(percentages["%s" % percentage])
-        # print(stats.shapiro(curr_perc))  # Shapiro-Wilk-Test
-        # print(np.corrcoef(time_list, curr_perc))  # Pearson Correlation
-        # print(stats.spearmanr(time_list, curr_perc, axis=1))  # Spearman Correlation TIME CORRECT?! want int instead of list
-        # first_day.append(curr_perc[0])
-        # last_day.append(curr_perc[-1])
-
-    #print(stats.ttest_rel(first_day, last_day))
-
-    # comparison between the different median of the fish for each stim
-    high_test_perc = percentage_creation(data_high)
-    low_test_perc = percentage_creation(data_low)
-    mixed_test_perc = percentage_creation(data_mixed)
-
-    for fish in high_test_perc:
-        print("High median of %s:" % fish, np.median(high_test_perc[fish]))
-
-    for fish in low_test_perc:
-        print("Low median of %s:" % fish, np.median(low_test_perc[fish]))
-
-    for fish in mixed_test_perc:
-        print("Mixed median of %s:" % fish, np.median(mixed_test_perc[fish]))
-
-    return percentages
-
 
 def boxplotting(data_high, data_low, data_mixed):
     high_test_perc = percentage_creation(data_high)
@@ -386,13 +330,12 @@ def boxplotting(data_high, data_low, data_mixed):
 
     data = [yr_highness, yr_lowness, yr_mixedness]
     fig, ax = plt.subplots()
-    ax.set_title('comparison of the testing stimuli')
+    ax.set_title('Vergleich der Stimuli im Testversuch')
     ax.boxplot(data)
 
-    plt.xticks([1, 2, 3], ['high', 'low', 'mixed'])
-    ax.set_ylabel('correct choices in %')
-    plt.show()
-    #plt.savefig("comparison of the testing stimuli.png")
+    plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'])
+    ax.set_ylabel('richtige Entscheidungen in %')
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
     sc.stats.ttest_ind(yr_highness, yr_mixedness)
 
     return plt
@@ -444,11 +387,67 @@ def reaction_time_analysis(times, data, stim):
 
     data = [high_react_ls, low_react_ls, mixed_react_ls]
     fig, ax = plt.subplots(figsize=(11, 8))
-    ax.set_title('comparison of the testing stimuli in reaction time', fontsize=13)
+    ax.set_title('Vergleich der Reaktionszeiten im Testversuch, nur Albi05 und Albi06', fontsize=13)
     ax.boxplot(data)
-    plt.xticks([1, 2, 3], ['high', 'low', 'mixed'], fontsize=12)
-    ax.set_ylabel('reaction time [s]', fontsize=12)
+    plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'], fontsize=12)
+    ax.set_ylabel('Reaktionszeit in s', fontsize=12)
 
-    plt.savefig("comparison of the testing stimuli in reaction time.svg")
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch, nur Albi05 und Albi06.svg")
+
+    return plt
+
+
+def diverse_statistics(percentages, flattened_fish, data_mixed, data_high, data_low):
+    # those lists need some adjustment, because of the different time periods
+
+    time = len(flattened_fish)
+    time_list = list(range(1, (time + 1)))
+    for percentage in percentages:
+        curr_perc = np.array(percentages["%s" % percentage])
+        # print(stats.shapiro(curr_perc))  # Shapiro-Wilk-Test
+        # print(np.corrcoef(time_list, curr_perc))  # Pearson Correlation
+        # print(stats.spearmanr(time_list, curr_perc, axis=1))  # Spearman Correlation TIME CORRECT?! want int instead of list
+
+
+    # comparison between the different median of the fish for each stim
+    high_test_perc = percentage_creation(data_high)
+    low_test_perc = percentage_creation(data_low)
+    mixed_test_perc = percentage_creation(data_mixed)
+
+    for fish in high_test_perc:
+        print("hochfrequenter Median von %s:" % fish, np.median(high_test_perc[fish]))
+
+    for fish in low_test_perc:
+        print("niederfrequenter Median von %s:" % fish, np.median(low_test_perc[fish]))
+
+    for fish in mixed_test_perc:
+        print("Gemischtfrequenter Median von %s:" % fish, np.median(mixed_test_perc[fish]))
+
+    return percentages
+
+
+def fish_regression(fish, flattened_fish, percentages, plot_name_single):
+    time = len(flattened_fish)
+    for percentage, name in zip(percentages, fish):
+        x_axis = np.arange(time).reshape(-1, 1)
+
+        bool_trial = flattened_fish > 0.7
+        y_axis = bool_trial * 1
+
+        # y_axis = percentages["perc_%s" % fish]
+        # y_axis = flattened_fish
+        # model = LogisticRegression(solver='liblinear', random_state=0)
+        model = LogisticRegression(C=10.0, class_weight=None, dual=False, fit_intercept=True,
+                                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                                   multi_class='ovr', n_jobs=None, penalty='l2',
+                                   random_state=0, solver='liblinear', tol=0.0001, verbose=0,
+                                   warm_start=False)
+        model.fit(x_axis, y_axis)
+        model.predict_proba(x_axis)  # shows performance of the model
+        model.predict(x_axis)  # shows the predictions
+        # print(model.score(x_axis, y_axis))  # shows the accuracy
+        plt.scatter(x_axis, y_axis)
+        plt.title("%s %s" % (fish, plot_name_single))
+        plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
 
     return plt
