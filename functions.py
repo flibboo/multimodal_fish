@@ -111,7 +111,6 @@ def plot_all_together(percentages, all_fish, plot_name):
         line_calc = [m * x_l + b for x_l in time_list]
 
         ax.plot(time_list, line_calc, "powderblue", linewidth=0.7)
-        # print('y =', m, 'x +', b)
 
         # summed axes
         m_summed.append(m)
@@ -128,7 +127,7 @@ def plot_all_together(percentages, all_fish, plot_name):
     E_x_2_med = statistics.median(E_x_2_sum)
     m_median = statistics.median(m_summed)
     b_median = statistics.median(b_summed)
-
+    print('y =', m_median, 'x +', b_median)
     # m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
     # b_sum = (E_y_med - (m_sum * E_x_med)) / N
 
@@ -168,9 +167,12 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         x = time_list
         N = time
 
+        # lineare Regression
         m_1, b_1 = np.polyfit(x, y, 1)
         ax[0].plot(x, m_1 * time_array + b_1, linewidth=1.5)
-        #print("%s slope:" % fish, m_1)
+        m_1 = np.round(m_1, 3)
+        b_1 = np.round(b_1, 3)
+        print("%s: y = %s x + %s" % (fish, m_1, b_1))
 
         # 50% line
         x_more = [0] + time_list + [len(curr_data)+1] # so that the line goes through the whole graph
@@ -199,7 +201,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax[0].set_ylabel('richtige Entscheidungen in %')
         ax[0].set_xlim([0, (time + 1)])
         ax[0].set_ylim([0, y_lims_single])
-        #ax[0].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
+        ax[0].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
         ax[0].set_title("%s %s" % (fish, plot_name_single))
 
         # binomial visualisation, but only for high and low data
@@ -311,19 +313,19 @@ def boxplotting(data_high, data_low, data_mixed):
 
     yr_highness = []
     for fish in high_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06": # can be skipped, if all fish should be included
-            yr_highness.extend(high_test_perc[fish])
+        #if fish == "perc_2020albi05" or fish == "perc_2020albi06": # can be skipped, if all fish should be included
+        yr_highness.extend(high_test_perc[fish])
 
 
     yr_lowness = []
     for fish in low_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
-            yr_lowness.extend(low_test_perc[fish])
+        #if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+        yr_lowness.extend(low_test_perc[fish])
 
     yr_mixedness = []
     for fish in mixed_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
-            yr_mixedness.extend(mixed_test_perc[fish])
+        #if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+        yr_mixedness.extend(mixed_test_perc[fish])
 
     #yr_mixedness = np.array(yr_mixedness)
     #yr_mixedness = yr_mixedness[yr_mixedness > 0.3]
@@ -348,51 +350,53 @@ def reaction_time_analysis(times, data, stim):
     mixed_react_ls = []
 
     for fish in data.columns:
-        if fish == "2020albi05" or fish == "2020albi06": # can be skipped, if all fish should be included
-            for index in data.index:
-                if index == 0:  # for skipping the first testing day (no time data)
-                    continue
-                    # getting the data for one fish
-                curr_data = data[fish][index]
-                curr_times = times[fish][index]
-                curr_stim = stim[fish][index]
+        #if fish == "2020albi05" or fish == "2020albi06": # can be skipped, if all fish should be included
+        for index in data.index:
+            if index == 0:  # for skipping the first testing day (no time data)
+                continue
+                # getting the data for one fish
+            curr_data = data[fish][index]
+            curr_times = times[fish][index]
+            curr_stim = stim[fish][index]
 
-                arr_data = np.array(curr_data)
-                arr_times = np.array(curr_times)
-                arr_stim = np.array(curr_stim)
+            arr_data = np.array(curr_data)
+            arr_times = np.array(curr_times)
+            arr_stim = np.array(curr_stim)
 
-                # high stim
-                high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
-                high_times = arr_times[arr_stim == "high"]
-                high_stim = arr_stim[arr_stim == "high"]
+            # high stim
+            high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
+            high_times = arr_times[arr_stim == "high"]
+            high_stim = arr_stim[arr_stim == "high"]
 
-                right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
-                high_react_ls.extend(right_high_times)
+            right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
+            high_react_ls.extend(right_high_times)
 
-                # low stim
-                low_data = arr_data[arr_stim == "low"]
-                low_times = arr_times[arr_stim == "low"]
-                low_stim = arr_stim[arr_stim == "low"]
+            # low stim
+            low_data = arr_data[arr_stim == "low"]
+            low_times = arr_times[arr_stim == "low"]
+            low_stim = arr_stim[arr_stim == "low"]
 
-                right_low_times = low_times[low_data == 1]
-                low_react_ls.extend(right_low_times)
+            right_low_times = low_times[low_data == 1]
+            low_react_ls.extend(right_low_times)
 
-                # mixed stim
-                mixed_data = arr_data[arr_stim == "mixed"]
-                mixed_times = arr_times[arr_stim == "mixed"]
-                mixed_stim = arr_stim[arr_stim == "mixed"]
+            # mixed stim
+            mixed_data = arr_data[arr_stim == "mixed"]
+            mixed_times = arr_times[arr_stim == "mixed"]
+            mixed_stim = arr_stim[arr_stim == "mixed"]
 
-                right_mixed_times = mixed_times[mixed_data == 1]
-                mixed_react_ls.extend(right_mixed_times)
+            right_mixed_times = mixed_times[mixed_data == 1]
+            mixed_react_ls.extend(right_mixed_times)
 
     data = [high_react_ls, low_react_ls, mixed_react_ls]
     fig, ax = plt.subplots(figsize=(11, 8))
-    ax.set_title('Vergleich der Reaktionszeiten im Testversuch, nur Albi05 und Albi06', fontsize=13)
+    #ax.set_title('Vergleich der Reaktionszeiten im Testversuch, nur Albi05 und Albi06', fontsize=13)
+    ax.set_title('Vergleich der Reaktionszeiten im Testversuch', fontsize=13)
     ax.boxplot(data)
     plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'], fontsize=12)
     ax.set_ylabel('Reaktionszeit in s', fontsize=12)
 
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch, nur Albi05 und Albi06.svg")
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch, nur Albi05 und Albi06.svg")
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
 
     return plt
 
@@ -405,7 +409,6 @@ def diverse_statistics(percentages, flattened_fish, data_mixed, data_high, data_
     for percentage in percentages:
         curr_perc = np.array(percentages["%s" % percentage])
         # print(stats.shapiro(curr_perc))  # Shapiro-Wilk-Test
-        # print(np.corrcoef(time_list, curr_perc))  # Pearson Correlation
         # print(stats.spearmanr(time_list, curr_perc, axis=1))  # Spearman Correlation TIME CORRECT?! want int instead of list
 
 
