@@ -139,16 +139,21 @@ def plot_all_together(percentages, all_fish, plot_name):
     ax.set_ylabel('richtige Entscheidungen in %')
     ax.set_xlim([0, (time + 1)])
     ax.set_ylim([0, 1.05])
+    ax.yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
     plt.title("%s" % plot_name)
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.svg" %plot_name)
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.svg" %plot_name)
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.png" %plot_name)
 
     return plt
 
 
 def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high):
     # universal plot variables
-    y_lims_single = 1.19
     y_ticks_single = 1.05
+    if tag == "use vertical lines":
+        y_lims_single = 1.05
+    else:    
+        y_lims_single = 1.19
 
 
     for fish in all_fish:
@@ -175,8 +180,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         print("%s: y = %s x + %s" % (fish, m_1, b_1))
 
         # 50% line
-        x_more = [0] + time_list + [len(curr_data)+1] # so that the line goes through the whole graph
-        ax[0].plot(x_more, ([0.5]*len(x_more)), linewidth= 0.5, linestyle='--', color="grey")
+        ax[0].axhline(0.5, linewidth= 0.5, linestyle='--', color="grey")
 
         # Pearson for R & p-Value
         r, p = np.round(sc.stats.pearsonr(x,y), 4)
@@ -202,7 +206,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax[0].set_xlim([0, (time + 1)])
         ax[0].set_ylim([0, y_lims_single])
         ax[0].yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
-        ax[0].set_title("%s %s" % (fish, plot_name_single))
+        #ax[0].set_title("%s %s" % (fish, plot_name_single))
 
         # binomial visualisation, but only for high and low data
         if tag == "low use, no vert lines": # just used the tag because its only with high/low function
@@ -271,7 +275,8 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax[1].axis('off')
 
         plt.subplots_adjust(wspace=-0.1, hspace=0.2)
-        plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.svg" % (fish, plot_name_single))
+        #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.svg" % (fish, plot_name_single))
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.png" % (fish, plot_name_single))
 
     return plt
 
@@ -332,13 +337,44 @@ def boxplotting(data_high, data_low, data_mixed):
 
     data = [yr_highness, yr_lowness, yr_mixedness]
     fig, ax = plt.subplots()
+    ax.axhline(0.5, linewidth= 0.5, linestyle='--', color="grey")
     ax.set_title('Vergleich der Stimuli im Testversuch')
     ax.boxplot(data)
 
     plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'])
     ax.set_ylabel('richtige Entscheidungen in %')
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
-    sc.stats.ttest_ind(yr_highness, yr_mixedness)
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.png")
+    
+    #ttest analysis for each combination
+    t_h_l = sc.stats.ttest_ind(yr_highness, yr_lowness)
+    t_h_m = sc.stats.ttest_ind(yr_highness, yr_mixedness)
+    t_l_m = sc.stats.ttest_ind(yr_lowness, yr_mixedness)
+    print("T-test Ergebnisse für korrekte Entscheidungen: hoch + niedrig: %s, hoch + gemischt: %s, niedrig + gemischt: %s" %(t_h_l, t_h_m, t_l_m))
+
+    return plt
+
+def boxplotting_for_singles (dataframe, tag):
+     # universal plot variables
+    y_lims_single = 1.05
+    y_ticks_single = 1.05
+
+    curr_perc = percentage_creation(dataframe)
+    fix, ax = plt.subplots()
+    all_fish_ls = []
+    for fish in curr_perc:
+        print(fish)
+        all_fish_ls.append(curr_perc[fish])
+    
+    ax.boxplot(all_fish_ls)
+    ax.set_ylabel('richtige Entscheidungen in %')
+    plt.xticks([1, 2, 3, 4, 5, 6], ['albi03', 'albi05', 'albi06', 'albi01', 'albi02', 'albi04'])
+    ax.set_ylim([0, y_lims_single])
+    ax.yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
+    ax.set_title('Vergleich der Fische mit %s' % tag)
+    
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.png" %tag)
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.svg" %tag)
 
     return plt
 
@@ -395,22 +431,21 @@ def reaction_time_analysis(times, data, stim):
     plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'], fontsize=12)
     ax.set_ylabel('Reaktionszeit in s', fontsize=12)
 
+    #ttest analysis for each combination
+    t_h_l = sc.stats.ttest_ind(high_react_ls, low_react_ls)
+    t_h_m = sc.stats.ttest_ind(high_react_ls, mixed_react_ls)
+    t_l_m = sc.stats.ttest_ind(low_react_ls, mixed_react_ls)
+    print("T-test Ergebnisse für Reaktionszeiten: hoch + niedrig: %s, hoch + gemischt: %s, niedrig + gemischt: %s" %(t_h_l, t_h_m, t_l_m))
+
+
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch, nur Albi05 und Albi06.svg")
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.png")
 
     return plt
 
 
-def diverse_statistics(percentages, flattened_fish, data_mixed, data_high, data_low):
-    # those lists need some adjustment, because of the different time periods
-
-    time = len(flattened_fish)
-    time_list = list(range(1, (time + 1)))
-    for percentage in percentages:
-        curr_perc = np.array(percentages["%s" % percentage])
-        # print(stats.shapiro(curr_perc))  # Shapiro-Wilk-Test
-        # print(stats.spearmanr(time_list, curr_perc, axis=1))  # Spearman Correlation TIME CORRECT?! want int instead of list
-
+def diverse_statistics(data_mixed, data_high, data_low):
 
     # comparison between the different median of the fish for each stim
     high_test_perc = percentage_creation(data_high)
@@ -426,7 +461,7 @@ def diverse_statistics(percentages, flattened_fish, data_mixed, data_high, data_
     for fish in mixed_test_perc:
         print("Gemischtfrequenter Median von %s:" % fish, np.median(mixed_test_perc[fish]))
 
-    return percentages
+    return print("stats done")
 
 
 def fish_regression(fish, flattened_fish, percentages, plot_name_single):
@@ -450,7 +485,7 @@ def fish_regression(fish, flattened_fish, percentages, plot_name_single):
         model.predict(x_axis)  # shows the predictions
         # print(model.score(x_axis, y_axis))  # shows the accuracy
         plt.scatter(x_axis, y_axis)
-        plt.title("%s %s" % (fish, plot_name_single))
+        #plt.title("%s %s" % (fish, plot_name_single))
         plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
 
     return plt
