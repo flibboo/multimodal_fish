@@ -55,7 +55,7 @@ def binomial_data(low_frame, high_frame):
         temp_t = np.add.reduceat(temp_trials, np.arange(0, len(temp_trials), 3))
         bino_low_list = []
         for index, thirds in enumerate(temp_c): # makes a binomal test for every 3 days
-            bino_low_list.append(np.round(sc.stats.binom_test(x=temp_c[index], n=temp_t[index], p=0.5),3))
+            bino_low_list.append(sc.stats.binom_test(x=temp_c[index], n=temp_t[index], p=0.5))
             bino_low_frame.update({dkey: bino_low_list})
 
     for name in high_frame.columns:
@@ -74,7 +74,7 @@ def binomial_data(low_frame, high_frame):
         temp_t = np.add.reduceat(temp_trials, np.arange(0, len(temp_trials), 3))
         bino_high_list = []
         for index, thirds in enumerate(temp_c): # makes a binomal test for every 3 days
-            bino_high_list.append(np.round(sc.stats.binom_test(x=temp_c[index], n=temp_t[index], p=0.5),3))
+            bino_high_list.append(sc.stats.binom_test(x=temp_c[index], n=temp_t[index], p=0.5))
             bino_high_frame.update({dkey: bino_high_list})
 
     return bino_low_frame, bino_high_frame
@@ -142,7 +142,7 @@ def plot_all_together(percentages, all_fish, plot_name):
     ax.yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
     plt.title("%s" % plot_name)
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.svg" %plot_name)
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.png" %plot_name)
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.png" %plot_name)
 
     return plt
 
@@ -210,50 +210,233 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
         # binomial visualisation, but only for high and low data
         if tag == "low use, no vert lines": # just used the tag because its only with high/low function
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][0], 3)
             ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
-            ax[0].text(1.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][0], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][0] < 0.05 else 'normal')
-            ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
-            ax[0].text(4.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][1], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][1] < 0.05 else 'normal')
-            ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
-            ax[0].text(7.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][2], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][2] < 0.05 else 'normal')
-            ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
-            ax[0].text(10.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][3], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][3] < 0.05 else 'normal')
-            ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
-            ax[0].text(13.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][4], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][4] < 0.05 else 'normal')
-            ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
-            ax[0].text(16.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][5], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][5] < 0.05 else 'normal')
-            ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
-            ax[0].text(19.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][6], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][6] < 0.05 else 'normal')
-            ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
-            ax[0].text(22.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][7], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][7] < 0.05 else 'normal')
-            ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
-            ax[0].text(25.5, 1.1 ,s = binomial_dataframe_low["bino_%s" %fish][8], ha='center', va='center', fontweight='bold' if binomial_dataframe_low["bino_%s" %fish][8] < 0.05 else 'normal')
-            
-            ax[0].text((time/2), 1.15, "p-Werte über je 3 Tage", ha='center', va='center')
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][0] > 0.01:
+                ax[0].text(1.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][0] > 0.001:
+                ax[0].text(1.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][0] < 0.001:
+                ax[0].text(1.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(1.5, 1.1 ,text_filler, ha='center', va='center')
 
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][1], 3)
+            ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][1] > 0.01:
+                ax[0].text(4.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][1] > 0.001:
+                ax[0].text(4.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][1] < 0.001:
+                ax[0].text(4.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(4.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][2], 3)
+            ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][2] > 0.01:
+                ax[0].text(7.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][2] > 0.001:
+                ax[0].text(7.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][2] < 0.001:
+                ax[0].text(7.05, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(7.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][3], 3)
+            ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][3] > 0.01:
+                ax[0].text(10.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][3] > 0.001:
+                ax[0].text(10.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][3] < 0.001:
+                ax[0].text(10.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(10.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][4], 3)
+            ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][4] > 0.01:
+                ax[0].text(13.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][4] > 0.001:
+                ax[0].text(13.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][4] < 0.001:
+                ax[0].text(13.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(13.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][5], 3)
+            ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][5] > 0.01:
+                ax[0].text(16.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][5] > 0.001:
+                ax[0].text(16.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][5] < 0.001:
+                ax[0].text(16.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(16.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][6], 3)
+            ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][6] > 0.01:
+                ax[0].text(19.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][6] > 0.001:
+                ax[0].text(19.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][6] < 0.001:
+                ax[0].text(19.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(19.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][7], 3)
+            ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][7] > 0.01:
+                ax[0].text(22.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][7] > 0.001:
+                ax[0].text(22.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][7] < 0.001:
+                ax[0].text(22.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(22.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][8], 3)
+            ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
+            if 0.05 > binomial_dataframe_low["bino_%s" %fish][8] > 0.01:
+                ax[0].text(25.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_low["bino_%s" %fish][8] > 0.001:
+                ax[0].text(25.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_low["bino_%s" %fish][8] < 0.001:
+                ax[0].text(25.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(25.5, 1.1 ,text_filler, ha='center', va='center')
+
+            try: # needed because not every fish made the same amount of trials
+                text_filler = np.round(binomial_dataframe_low["bino_%s" %fish][9], 3)
+                ax[0].axvline(x = 30, ymin = 0.88, ymax = 0.9)
+                if 0.05 > binomial_dataframe_low["bino_%s" %fish][9] > 0.01:
+                    ax[0].text(28.5, 1.05, '*', ha='center', va='center')
+                if 0.01 > binomial_dataframe_low["bino_%s" %fish][9] > 0.001:
+                    ax[0].text(28.5, 1.05, '**', ha='center', va='center')
+                if binomial_dataframe_low["bino_%s" %fish][9] < 0.001:
+                    ax[0].text(28.5, 1.05, '***', ha='center', va='center')
+                    text_filler = "<0.001"
+                ax[0].text(28.5, 1.1 ,text_filler, ha='center', va='center')
+            except:
+                print("Hier könnte Ihre Werbung stehen")
+            ax[0].text((time/2), 1.15, "p-Werte über je 3 Tage", ha='center', va='center')
+            
 
         if tag == "high use, no vert lines": 
+
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][0], 3)
             ax[0].axvline(x = 3, ymin = 0.88, ymax = 0.9)
-            ax[0].text(1.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][0], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][0] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][0] > 0.01:
+                ax[0].text(1.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][0] > 0.001:
+                ax[0].text(1.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][0] < 0.001:
+                ax[0].text(1.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(1.5, 1.1 ,text_filler, ha='center', va='center')
+
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][1], 3)
             ax[0].axvline(x = 6, ymin = 0.88, ymax = 0.9)
-            ax[0].text(4.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][1], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][1] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][1] > 0.01:
+                ax[0].text(4.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][1] > 0.001:
+                ax[0].text(4.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][1] < 0.001:
+                ax[0].text(4.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(4.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][2], 3)
             ax[0].axvline(x = 9, ymin = 0.88, ymax = 0.9)
-            ax[0].text(7.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][2], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][2] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][2] > 0.01:
+                ax[0].text(7.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][2] > 0.001:
+                ax[0].text(7.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][2] < 0.001:
+                ax[0].text(7.05, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(7.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][3], 3)
             ax[0].axvline(x = 12, ymin = 0.88, ymax = 0.9)
-            ax[0].text(10.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][3], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][3] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][3] > 0.01:
+                ax[0].text(10.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][3] > 0.001:
+                ax[0].text(10.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][3] < 0.001:
+                ax[0].text(10.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(10.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][4], 3)
             ax[0].axvline(x = 15, ymin = 0.88, ymax = 0.9)
-            ax[0].text(13.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][4], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][4] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][4] > 0.01:
+                ax[0].text(13.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][4] > 0.001:
+                ax[0].text(13.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][4] < 0.001:
+                ax[0].text(13.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(13.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][5], 3)
             ax[0].axvline(x = 18, ymin = 0.88, ymax = 0.9)
-            ax[0].text(16.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][5], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][5] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][5] > 0.01:
+                ax[0].text(16.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][5] > 0.001:
+                ax[0].text(16.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][5] < 0.001:
+                ax[0].text(16.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(16.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][6], 3)
             ax[0].axvline(x = 21, ymin = 0.88, ymax = 0.9)
-            ax[0].text(19.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][6], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][6] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][6] > 0.01:
+                ax[0].text(19.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][6] > 0.001:
+                ax[0].text(19.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][6] < 0.001:
+                ax[0].text(19.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(19.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][7], 3)
             ax[0].axvline(x = 24, ymin = 0.88, ymax = 0.9)
-            ax[0].text(22.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][7], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][7] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][7] > 0.01:
+                ax[0].text(22.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][7] > 0.001:
+                ax[0].text(22.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][7] < 0.001:
+                ax[0].text(22.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(22.5, 1.1 ,text_filler, ha='center', va='center')
+            
+            text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][8], 3)
             ax[0].axvline(x = 27, ymin = 0.88, ymax = 0.9)
-            ax[0].text(25.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][8], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][8] < 0.05 else 'normal')
+            if 0.05 > binomial_dataframe_high["bino_%s" %fish][8] > 0.01:
+                ax[0].text(25.5, 1.05, '*', ha='center', va='center')
+            if 0.01 > binomial_dataframe_high["bino_%s" %fish][8] > 0.001:
+                ax[0].text(25.5, 1.05, '**', ha='center', va='center')
+            if binomial_dataframe_high["bino_%s" %fish][8] < 0.001:
+                ax[0].text(25.5, 1.05, '***', ha='center', va='center')
+                text_filler = "<0.001"
+            ax[0].text(25.5, 1.1 ,text_filler, ha='center', va='center')
+
             try: # needed because not every fish made the same amount of trials
+                text_filler = np.round(binomial_dataframe_high["bino_%s" %fish][9], 3)
                 ax[0].axvline(x = 30, ymin = 0.88, ymax = 0.9)
-                ax[0].text(28.5, 1.1 ,binomial_dataframe_high["bino_%s" %fish][9], ha='center', va='center', fontweight='bold' if binomial_dataframe_high["bino_%s" %fish][9] < 0.05 else 'normal')
+                if 0.05 > binomial_dataframe_high["bino_%s" %fish][9] > 0.01:
+                    ax[0].text(28.5, 1.05, '*', ha='center', va='center')
+                if 0.01 > binomial_dataframe_high["bino_%s" %fish][9] > 0.001:
+                    ax[0].text(28.5, 1.05, '**', ha='center', va='center')
+                if binomial_dataframe_high["bino_%s" %fish][9] < 0.001:
+                    ax[0].text(28.5, 1.05, '***', ha='center', va='center')
+                    text_filler = "<0.001"
+                ax[0].text(28.5, 1.1 ,text_filler, ha='center', va='center')
             except:
                 print("Hier könnte Ihre Werbung stehen")
             ax[0].text((time/2), 1.15, "p-Werte über je 3 Tage", ha='center', va='center')
@@ -276,7 +459,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
         plt.subplots_adjust(wspace=-0.1, hspace=0.2)
         #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.svg" % (fish, plot_name_single))
-        plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.png" % (fish, plot_name_single))
+        #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.png" % (fish, plot_name_single))
 
     return plt
 
@@ -318,19 +501,19 @@ def boxplotting(data_high, data_low, data_mixed):
 
     yr_highness = []
     for fish in high_test_perc:
-        #if fish == "perc_2020albi05" or fish == "perc_2020albi06": # can be skipped, if all fish should be included
-        yr_highness.extend(high_test_perc[fish])
+        if fish == "perc_2020albi05" or fish == "perc_2020albi06": # can be skipped, if all fish should be included
+            yr_highness.extend(high_test_perc[fish])
 
 
     yr_lowness = []
     for fish in low_test_perc:
-        #if fish == "perc_2020albi05" or fish == "perc_2020albi06":
-        yr_lowness.extend(low_test_perc[fish])
+        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+            yr_lowness.extend(low_test_perc[fish])
 
     yr_mixedness = []
     for fish in mixed_test_perc:
-        #if fish == "perc_2020albi05" or fish == "perc_2020albi06":
-        yr_mixedness.extend(mixed_test_perc[fish])
+        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+            yr_mixedness.extend(mixed_test_perc[fish])
 
     #yr_mixedness = np.array(yr_mixedness)
     #yr_mixedness = yr_mixedness[yr_mixedness > 0.3]
@@ -344,8 +527,9 @@ def boxplotting(data_high, data_low, data_mixed):
     plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'])
     ax.set_ylabel('richtige Entscheidungen in %')
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.png")
-    
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.png")
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch_nur_05_06.svg")
+
     #ttest analysis for each combination
     t_h_l = sc.stats.ttest_ind(yr_highness, yr_lowness)
     t_h_m = sc.stats.ttest_ind(yr_highness, yr_mixedness)
@@ -355,7 +539,7 @@ def boxplotting(data_high, data_low, data_mixed):
     return plt
 
 def boxplotting_for_singles (dataframe, tag):
-     # universal plot variables
+    # universal plot variables
     y_lims_single = 1.05
     y_ticks_single = 1.05
 
@@ -374,7 +558,7 @@ def boxplotting_for_singles (dataframe, tag):
     ax.set_title('Vergleich der Fische mit %s' % tag)
     
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.png" %tag)
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.svg" %tag)
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.svg" %tag)
 
     return plt
 
@@ -386,42 +570,42 @@ def reaction_time_analysis(times, data, stim):
     mixed_react_ls = []
 
     for fish in data.columns:
-        #if fish == "2020albi05" or fish == "2020albi06": # can be skipped, if all fish should be included
-        for index in data.index:
-            if index == 0:  # for skipping the first testing day (no time data)
-                continue
-                # getting the data for one fish
-            curr_data = data[fish][index]
-            curr_times = times[fish][index]
-            curr_stim = stim[fish][index]
+        if fish == "2020albi05" or fish == "2020albi06": # can be skipped, if all fish should be included
+            for index in data.index:
+                if index == 0:  # for skipping the first testing day (no time data)
+                    continue
+                    # getting the data for one fish
+                curr_data = data[fish][index]
+                curr_times = times[fish][index]
+                curr_stim = stim[fish][index]
 
-            arr_data = np.array(curr_data)
-            arr_times = np.array(curr_times)
-            arr_stim = np.array(curr_stim)
+                arr_data = np.array(curr_data)
+                arr_times = np.array(curr_times)
+                arr_stim = np.array(curr_stim)
 
-            # high stim
-            high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
-            high_times = arr_times[arr_stim == "high"]
-            high_stim = arr_stim[arr_stim == "high"]
+                # high stim
+                high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
+                high_times = arr_times[arr_stim == "high"]
+                high_stim = arr_stim[arr_stim == "high"]
 
-            right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
-            high_react_ls.extend(right_high_times)
+                right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
+                high_react_ls.extend(right_high_times)
 
-            # low stim
-            low_data = arr_data[arr_stim == "low"]
-            low_times = arr_times[arr_stim == "low"]
-            low_stim = arr_stim[arr_stim == "low"]
+                # low stim
+                low_data = arr_data[arr_stim == "low"]
+                low_times = arr_times[arr_stim == "low"]
+                low_stim = arr_stim[arr_stim == "low"]
 
-            right_low_times = low_times[low_data == 1]
-            low_react_ls.extend(right_low_times)
+                right_low_times = low_times[low_data == 1]
+                low_react_ls.extend(right_low_times)
 
-            # mixed stim
-            mixed_data = arr_data[arr_stim == "mixed"]
-            mixed_times = arr_times[arr_stim == "mixed"]
-            mixed_stim = arr_stim[arr_stim == "mixed"]
+                # mixed stim
+                mixed_data = arr_data[arr_stim == "mixed"]
+                mixed_times = arr_times[arr_stim == "mixed"]
+                mixed_stim = arr_stim[arr_stim == "mixed"]
 
-            right_mixed_times = mixed_times[mixed_data == 1]
-            mixed_react_ls.extend(right_mixed_times)
+                right_mixed_times = mixed_times[mixed_data == 1]
+                mixed_react_ls.extend(right_mixed_times)
 
     data = [high_react_ls, low_react_ls, mixed_react_ls]
     fig, ax = plt.subplots(figsize=(11, 8))
@@ -438,9 +622,9 @@ def reaction_time_analysis(times, data, stim):
     print("T-test Ergebnisse für Reaktionszeiten: hoch + niedrig: %s, hoch + gemischt: %s, niedrig + gemischt: %s" %(t_h_l, t_h_m, t_l_m))
 
 
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch, nur Albi05 und Albi06.svg")
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch_nur_05_06.png")
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.png")
+    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.png")
 
     return plt
 
@@ -485,7 +669,7 @@ def fish_regression(fish, flattened_fish, percentages, plot_name_single):
         model.predict(x_axis)  # shows the predictions
         # print(model.score(x_axis, y_axis))  # shows the accuracy
         plt.scatter(x_axis, y_axis)
-        #plt.title("%s %s" % (fish, plot_name_single))
+        plt.title("%s %s" % (fish, plot_name_single))
         plt.plot(x_axis, model.predict_proba(x_axis)[:, 1])
 
     return plt

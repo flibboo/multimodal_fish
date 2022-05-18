@@ -46,6 +46,7 @@ plt.show()
 """
 # using only low/high data
 """
+
 plot_name = "Alle Fische, niederfrequenter Stimulus (10 Hz)"
 plot_name_single = ", niederfrequenter Stimulus (10 Hz)"
 low_data_use(training_low_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
@@ -83,7 +84,7 @@ for fish in all_fish:
     plt.show()
     #plt.close()
 """
-
+"""
 """
 # testing analysis
 """
@@ -103,7 +104,7 @@ plt.show()
 
 tag = "gemischtem Stimulus (Testdaten)"
 boxplotting_for_singles(testing_mixed_data, tag)
-
+"""
 """
 # other statistics
 """
