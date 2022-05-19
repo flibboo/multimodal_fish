@@ -89,13 +89,19 @@ def plot_all_together(percentages, all_fish, plot_name):
     m_summed = []
     b_summed = []
 
+    color = "lightgrey"
+    if plot_name == "Alle Fische, hochfrequenter Stimulus (1000 Hz)":
+        color = "khaki"
+    if plot_name == "Alle Fische, niederfrequenter Stimulus (10 Hz)":
+        color = "lightblue"
+
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
         time_array = np.array(time)
         time_list = list(range(1, (time + 1)))
 
-        ax.plot(time_list, curr_data, "lightgrey", linewidth=0.6)
+        ax.plot(time_list, curr_data, c="lightgrey" , linewidth=0.6)
         x = time_list
         N = time
 
@@ -110,7 +116,7 @@ def plot_all_together(percentages, all_fish, plot_name):
         b = (E_y - (m * E_x)) / N
         line_calc = [m * x_l + b for x_l in time_list]
 
-        ax.plot(time_list, line_calc, "powderblue", linewidth=0.7)
+        ax.plot(time_list, line_calc, c=color, linewidth=0.7)
 
         # summed axes
         m_summed.append(m)
@@ -127,13 +133,14 @@ def plot_all_together(percentages, all_fish, plot_name):
     E_x_2_med = statistics.median(E_x_2_sum)
     m_median = statistics.median(m_summed)
     b_median = statistics.median(b_summed)
+    print("Lineare Regressionsgleichung gesammelter Plots:")
     print('y =', m_median, 'x +', b_median)
     # m_sum = (((N * E_xy_med) - (E_x_med * E_y_med)) / ((N * E_x_2_med) - (E_x_med * E_x_med)))
     # b_sum = (E_y_med - (m_sum * E_x_med)) / N
 
     line_calc = [m_median * x_l + b_median for x_l in time_list]  # loop is for multiplying lists
 
-    ax.plot(time_list, line_calc, "darkviolet", linewidth=2)
+    ax.plot(time_list, line_calc, "orange", linewidth=2)
 
     ax.set_xlabel('Tage')
     ax.set_ylabel('richtige Entscheidungen in %')
@@ -154,7 +161,14 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         y_lims_single = 1.05
     else:    
         y_lims_single = 1.19
+    
+    color = "lightgrey"
 
+    if plot_name_single == ", hochfrequenter Stimulus (1000 Hz)":
+        color = "khaki"
+
+    if plot_name_single == ", niederfrequenter Stimulus (10 Hz)":
+        color = "lightblue"
 
     for fish in all_fish:
         curr_data = percentages["perc_%s" % fish]
@@ -164,7 +178,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
         fig, ax = plt.subplots(1 ,2, figsize=(10,8), gridspec_kw={'width_ratios': [4, 1]})
 
-        ax[0].plot(time_list, curr_data)
+        ax[0].plot(time_list, curr_data, c=color)
         ax[0].spines['top'].set_visible(False)
         ax[0].spines['right'].set_visible(False)
 
@@ -174,9 +188,10 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
         # lineare Regression
         m_1, b_1 = np.polyfit(x, y, 1)
-        ax[0].plot(x, m_1 * time_array + b_1, linewidth=1.5)
+        ax[0].plot(x, m_1 * time_array + b_1, linewidth=1.5, c="orange")
         m_1 = np.round(m_1, 3)
         b_1 = np.round(b_1, 3)
+        print("Lineare Regression der einzel Plots:")
         print("%s: y = %s x + %s" % (fish, m_1, b_1))
 
         # 50% line
@@ -501,18 +516,18 @@ def boxplotting(data_high, data_low, data_mixed):
 
     yr_highness = []
     for fish in high_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06": # can be skipped, if all fish should be included
+        if fish == "perc_2020albi06":# or fish == "perc_2020albi06": # can be skipped, if all fish should be included
             yr_highness.extend(high_test_perc[fish])
 
 
     yr_lowness = []
     for fish in low_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+        if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
             yr_lowness.extend(low_test_perc[fish])
 
     yr_mixedness = []
     for fish in mixed_test_perc:
-        if fish == "perc_2020albi05" or fish == "perc_2020albi06":
+        if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
             yr_mixedness.extend(mixed_test_perc[fish])
 
     #yr_mixedness = np.array(yr_mixedness)
@@ -524,11 +539,24 @@ def boxplotting(data_high, data_low, data_mixed):
     ax.set_title('Vergleich der Stimuli im Testversuch')
     ax.boxplot(data)
 
+    print("Boxplot des Testing:")
+
+    bp = ax.boxplot(data, vert=True, patch_artist=True)
+    #print("medians of boxplots: %s" % bp['medians'][0].get_ydata())
+    for medline in bp['medians']:
+        linedata = medline.get_ydata()
+        median = linedata[0]
+        print("Boxplotmedian: %s" % median)
+      
+    colors = ['khaki', 'lightblue', 'lightgreen']
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color)
+    
     plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'])
     ax.set_ylabel('richtige Entscheidungen in %')
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.png")
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch_nur_05_06.svg")
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch_nur_06.png")
 
     #ttest analysis for each combination
     t_h_l = sc.stats.ttest_ind(yr_highness, yr_lowness)
@@ -547,16 +575,34 @@ def boxplotting_for_singles (dataframe, tag):
     fix, ax = plt.subplots()
     all_fish_ls = []
     for fish in curr_perc:
-        print(fish)
         all_fish_ls.append(curr_perc[fish])
     
-    ax.boxplot(all_fish_ls)
+    #ax.boxplot(all_fish_ls)
     ax.set_ylabel('richtige Entscheidungen in %')
-    plt.xticks([1, 2, 3, 4, 5, 6], ['albi03', 'albi05', 'albi06', 'albi01', 'albi02', 'albi04'])
     ax.set_ylim([0, y_lims_single])
     ax.yaxis.set_ticks(np.arange(0, y_ticks_single, step=0.1))
     ax.set_title('Vergleich der Fische mit %s' % tag)
     
+    print("Einzeln Plotwerte von %s" % tag)
+
+    bp = ax.boxplot(all_fish_ls, vert=True, patch_artist=True)
+    for medline in bp['medians']:
+        linedata = medline.get_ydata()
+        median = linedata[0]
+        print("Boxplotmedian: %s" % median)
+
+    if tag == "hochfrequentem Stimulus (Testdaten)" or tag == "hochfrequentem Stimulus (Trainingsdaten)":
+        colors = ['khaki','khaki','khaki','khaki','khaki','khaki']
+    if tag == "niederfrequentem Stimulus (Testdaten)"or tag == "niederfrequentem Stimulus (Trainingsdaten)":
+        colors = ['lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue', 'lightblue']
+    if tag == "gemischtem Stimulus (Testdaten)":
+        colors = ['lightgreen', 'lightgreen', 'lightgreen', 'lightgreen', 'lightgreen', 'lightgreen']
+
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color)
+    
+    plt.xticks([1, 2, 3, 4, 5, 6], ['albi01', 'albi02', 'albi03', 'albi04', 'albi05', 'albi06'])
+
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.png" %tag)
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.svg" %tag)
 
@@ -570,7 +616,7 @@ def reaction_time_analysis(times, data, stim):
     mixed_react_ls = []
 
     for fish in data.columns:
-        if fish == "2020albi05" or fish == "2020albi06": # can be skipped, if all fish should be included
+        if fish == "2020albi06":# or fish == "2020albi06": # can be skipped, if all fish should be included
             for index in data.index:
                 if index == 0:  # for skipping the first testing day (no time data)
                     continue
@@ -611,10 +657,20 @@ def reaction_time_analysis(times, data, stim):
     fig, ax = plt.subplots(figsize=(11, 8))
     #ax.set_title('Vergleich der Reaktionszeiten im Testversuch, nur Albi05 und Albi06', fontsize=13)
     ax.set_title('Vergleich der Reaktionszeiten im Testversuch', fontsize=13)
-    ax.boxplot(data)
-    plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'], fontsize=12)
     ax.set_ylabel('Reaktionszeit in s', fontsize=12)
 
+    print("Reaktionszeiten Werte & Angaben:")
+    bp = ax.boxplot(data, vert=True, patch_artist=True)
+    for medline in bp['medians']:
+        linedata = medline.get_ydata()
+        median = linedata[0]
+        print("Boxplotmedian: %s" % median)
+    
+    colors = ['khaki', 'lightblue', 'lightgreen']
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color)
+    
+    plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'], fontsize=12)
     #ttest analysis for each combination
     t_h_l = sc.stats.ttest_ind(high_react_ls, low_react_ls)
     t_h_m = sc.stats.ttest_ind(high_react_ls, mixed_react_ls)
@@ -622,7 +678,7 @@ def reaction_time_analysis(times, data, stim):
     print("T-test Ergebnisse für Reaktionszeiten: hoch + niedrig: %s, hoch + gemischt: %s, niedrig + gemischt: %s" %(t_h_l, t_h_m, t_l_m))
 
 
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch_nur_05_06.png")
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch_nur_06.svg")
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.png")
 
@@ -635,15 +691,16 @@ def diverse_statistics(data_mixed, data_high, data_low):
     high_test_perc = percentage_creation(data_high)
     low_test_perc = percentage_creation(data_low)
     mixed_test_perc = percentage_creation(data_mixed)
-
+    
+    print("Test Means:")
     for fish in high_test_perc:
-        print("hochfrequenter Median von %s:" % fish, np.median(high_test_perc[fish]))
+        print("hochfrequenter Mean von %s:" % fish, np.mean(high_test_perc[fish]))
 
     for fish in low_test_perc:
-        print("niederfrequenter Median von %s:" % fish, np.median(low_test_perc[fish]))
+        print("niederfrequenter Mean von %s:" % fish, np.mean(low_test_perc[fish]))
 
     for fish in mixed_test_perc:
-        print("Gemischtfrequenter Median von %s:" % fish, np.median(mixed_test_perc[fish]))
+        print("Gemischtfrequenter Mean von %s:" % fish, np.mean(mixed_test_perc[fish]))
 
     return print("stats done")
 
