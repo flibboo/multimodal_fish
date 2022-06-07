@@ -47,7 +47,7 @@ plot_all_together(percentages, all_fish, plot_name)
 plt.show()
 #plt.close()
 """
-
+"""
 plot_name_single = ", hoch- und niederfrequente Stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
 plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
@@ -73,7 +73,7 @@ high_data_use(training_high_data, all_fish, plot_name, plot_name_single, binomia
 tag = "hochfrequentem Stimulus (Trainingsdaten)"
 boxplotting_for_singles(training_high_data, tag)
 plt.show()
-
+"""
 """
 # testing analysis
 """

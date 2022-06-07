@@ -287,7 +287,7 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         j = 1
         ax = plt.Subplot(fig, inner[j])
 
-        ax.boxplot(curr_data)
+        bp = ax.boxplot(curr_data, vert=True, patch_artist=False)
         ax.get_xaxis().set_ticks([])
         #ax[1].yaxis.set_label_position("right")
         #ax[1].yaxis.tick_right()
@@ -301,6 +301,18 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
         ax.set_facecolor('none')
         ax.axis('off')
         
+        for medline in bp['medians']:
+            linedata = medline.get_ydata()
+            median = linedata[0]
+            print("Boxplotmedian: %s" % median)
+        """
+        q1 = [min(item.get_ydata()) for item in bp['boxes']]
+        q3 = [max(item.get_ydata()) for item in bp['boxes']]
+        print(f'Q1: {q1}\n' f'Q3: {q3}')
+        iqa = q3[0] - q1[0]
+        print("Boxplot IQA = %s" % iqa)
+
+        """
         fig.add_subplot(ax)
 
     plt.subplots_adjust(wspace=-0.1, hspace=0.2)
@@ -350,19 +362,19 @@ def boxplotting(data_high, data_low, data_mixed):
 
     yr_highness = []
     for fish in high_test_perc:
-        if fish == "perc_2020albi06":# or fish == "perc_2020albi06": # can be skipped, if all fish should be included
-            yr_highness.extend(high_test_perc[fish])
+        #if fish == "perc_2020albi06":# or fish == "perc_2020albi06": # can be skipped, if all fish should be included
+        yr_highness.extend(high_test_perc[fish])
 
 
     yr_lowness = []
     for fish in low_test_perc:
-        if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
-            yr_lowness.extend(low_test_perc[fish])
+        #if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
+        yr_lowness.extend(low_test_perc[fish])
 
     yr_mixedness = []
     for fish in mixed_test_perc:
-        if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
-            yr_mixedness.extend(mixed_test_perc[fish])
+        #if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
+        yr_mixedness.extend(mixed_test_perc[fish])
 
     #yr_mixedness = np.array(yr_mixedness)
     #yr_mixedness = yr_mixedness[yr_mixedness > 0.3]
@@ -375,13 +387,21 @@ def boxplotting(data_high, data_low, data_mixed):
 
     print("Boxplot des Testing:")
 
-    bp = ax.boxplot(data, vert=True, patch_artist=True)
+    bp = ax.boxplot(data, vert=True, patch_artist=False)
     #print("medians of boxplots: %s" % bp['medians'][0].get_ydata())
     for medline in bp['medians']:
         linedata = medline.get_ydata()
         median = linedata[0]
         print("Boxplotmedian: %s" % median)
-      
+    
+    q1 = [min(item.get_ydata()) for item in bp['boxes']]
+    q3 = [max(item.get_ydata()) for item in bp['boxes']]
+    print(f'Q1: {q1}\n' f'Q3: {q3}')
+    for q1v, q3v  in zip(q1, q3):
+        iqa = q3v - q1v
+        print("Boxplot IQA = %s" % iqa)
+
+    bp = ax.boxplot(data, vert=True, patch_artist=True)
     colors = ['khaki', 'lightblue', 'lightgreen']
     for patch, color in zip(bp['boxes'], colors):
         patch.set_facecolor(color)
@@ -419,12 +439,20 @@ def boxplotting_for_singles (dataframe, tag):
     
     print("Einzeln Plotwerte von %s" % tag)
 
-    bp = ax.boxplot(all_fish_ls, vert=True, patch_artist=True)
+    bp = ax.boxplot(all_fish_ls, vert=True, patch_artist=False)
     for medline in bp['medians']:
         linedata = medline.get_ydata()
         median = linedata[0]
         print("Boxplotmedian: %s" % median)
 
+    q1 = [min(item.get_ydata()) for item in bp['boxes']]
+    q3 = [max(item.get_ydata()) for item in bp['boxes']]
+    print(f'Q1: {q1}\n' f'Q3: {q3}')
+    for q1v, q3v  in zip(q1, q3):
+        iqa = q3v - q1v
+        print("Boxplot IQA = %s" % iqa)
+
+    bp = ax.boxplot(all_fish_ls, vert=True, patch_artist=True)
     if tag == "hochfrequentem Stimulus (Testdaten)" or tag == "hochfrequentem Stimulus (Trainingsdaten)":
         colors = ['khaki','khaki','khaki','khaki','khaki','khaki']
     if tag == "niederfrequentem Stimulus (Testdaten)"or tag == "niederfrequentem Stimulus (Trainingsdaten)":
@@ -450,42 +478,42 @@ def reaction_time_analysis(times, data, stim):
     mixed_react_ls = []
 
     for fish in data.columns:
-        if fish == "2020albi06":# or fish == "2020albi06": # can be skipped, if all fish should be included
-            for index in data.index:
-                if index == 0:  # for skipping the first testing day (no time data)
-                    continue
-                    # getting the data for one fish
-                curr_data = data[fish][index]
-                curr_times = times[fish][index]
-                curr_stim = stim[fish][index]
+        #if fish == "2020albi06":# or fish == "2020albi06": # can be skipped, if all fish should be included
+        for index in data.index:
+            if index == 0:  # for skipping the first testing day (no time data)
+                continue
+                # getting the data for one fish
+            curr_data = data[fish][index]
+            curr_times = times[fish][index]
+            curr_stim = stim[fish][index]
 
-                arr_data = np.array(curr_data)
-                arr_times = np.array(curr_times)
-                arr_stim = np.array(curr_stim)
+            arr_data = np.array(curr_data)
+            arr_times = np.array(curr_times)
+            arr_stim = np.array(curr_stim)
 
-                # high stim
-                high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
-                high_times = arr_times[arr_stim == "high"]
-                high_stim = arr_stim[arr_stim == "high"]
+            # high stim
+            high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
+            high_times = arr_times[arr_stim == "high"]
+            high_stim = arr_stim[arr_stim == "high"]
 
-                right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
-                high_react_ls.extend(right_high_times)
+            right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
+            high_react_ls.extend(right_high_times)
 
-                # low stim
-                low_data = arr_data[arr_stim == "low"]
-                low_times = arr_times[arr_stim == "low"]
-                low_stim = arr_stim[arr_stim == "low"]
+            # low stim
+            low_data = arr_data[arr_stim == "low"]
+            low_times = arr_times[arr_stim == "low"]
+            low_stim = arr_stim[arr_stim == "low"]
 
-                right_low_times = low_times[low_data == 1]
-                low_react_ls.extend(right_low_times)
+            right_low_times = low_times[low_data == 1]
+            low_react_ls.extend(right_low_times)
 
-                # mixed stim
-                mixed_data = arr_data[arr_stim == "mixed"]
-                mixed_times = arr_times[arr_stim == "mixed"]
-                mixed_stim = arr_stim[arr_stim == "mixed"]
+            # mixed stim
+            mixed_data = arr_data[arr_stim == "mixed"]
+            mixed_times = arr_times[arr_stim == "mixed"]
+            mixed_stim = arr_stim[arr_stim == "mixed"]
 
-                right_mixed_times = mixed_times[mixed_data == 1]
-                mixed_react_ls.extend(right_mixed_times)
+            right_mixed_times = mixed_times[mixed_data == 1]
+            mixed_react_ls.extend(right_mixed_times)
 
     data = [high_react_ls, low_react_ls, mixed_react_ls]
     fig, ax = plt.subplots(figsize=(11, 8))
@@ -494,12 +522,21 @@ def reaction_time_analysis(times, data, stim):
     ax.set_ylabel('Reaktionszeit in s', fontsize=12)
 
     print("Reaktionszeiten Werte & Angaben:")
-    bp = ax.boxplot(data, vert=True, patch_artist=True)
+    bp = ax.boxplot(data, vert=True, patch_artist=False)
     for medline in bp['medians']:
         linedata = medline.get_ydata()
         median = linedata[0]
         print("Boxplotmedian: %s" % median)
     
+    q1 = [min(item.get_ydata()) for item in bp['boxes']]
+    q3 = [max(item.get_ydata()) for item in bp['boxes']]
+    print(f'Q1: {q1}\n' f'Q3: {q3}')
+    for q1v, q3v  in zip(q1, q3):
+        iqa = q3v - q1v
+        print("Boxplot IQA = %s" % iqa)
+
+    bp = ax.boxplot(data, vert=True, patch_artist=True)
+
     colors = ['khaki', 'lightblue', 'lightgreen']
     for patch, color in zip(bp['boxes'], colors):
         patch.set_facecolor(color)
