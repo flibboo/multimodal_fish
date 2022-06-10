@@ -38,6 +38,7 @@ def percentage_creation(dataframe):
         percentages.update({dkey: l})
     return percentages
 
+
 def binomial_data(low_frame, high_frame):
     bino_low_frame = {}
     bino_high_frame = {}
@@ -82,8 +83,17 @@ def binomial_data(low_frame, high_frame):
 
     return bino_low_frame, bino_high_frame
 
+
 def plot_all_together(percentages, all_fish, plot_name):
     fig, ax = plt.subplots(figsize=(10,8))
+
+    # Farbcodierung für die verschiedenen Stimuli
+    a01_colors = ['navy', 'cornflowerblue', 'blue']
+    a02_colors = ['darkred', 'lightcoral', 'red']
+    a03_colors = ['darkgreen', 'yellowgreen', 'springgreen']
+    a04_colors = ['goldenrod', 'khaki', 'yellow']
+    a05_colors = ['indigo', 'mediumpurple', 'blueviolet']
+    a06_colors = ['darkmagenta', 'violet', 'fuchsia']
 
     E_xy_sum = []
     E_x_sum = []
@@ -92,19 +102,19 @@ def plot_all_together(percentages, all_fish, plot_name):
     m_summed = []
     b_summed = []
 
-    color = "lightgrey"
+    color = "pink"
     if plot_name == "Alle Fische, hochfrequenter Stimulus (1000 Hz)":
-        color = "khaki"
+        color = "black"
     if plot_name == "Alle Fische, niederfrequenter Stimulus (10 Hz)":
-        color = "lightblue"
+        color = "lightgrey"
 
-    for fish in all_fish:
+    for index, fish in enumerate(all_fish):
         curr_data = percentages["perc_%s" % fish]
         time = len(curr_data)
         time_array = np.array(time)
         time_list = list(range(1, (time + 1)))
 
-        ax.plot(time_list, curr_data, c="lightgrey" , linewidth=0.6)
+        ax.plot(time_list, curr_data, c="lightgrey" , linewidth=0.4)
         x = time_list
         N = time
 
@@ -119,7 +129,18 @@ def plot_all_together(percentages, all_fish, plot_name):
         b = (E_y - (m * E_x)) / N
         line_calc = [m * x_l + b for x_l in time_list]
 
-        ax.plot(time_list, line_calc, c=color, linewidth=0.7)
+        color_graph = locals()["a0%s_colors" % (index+1)]
+        
+        if plot_name == "Alle Fische, hochfrequenter Stimulus (1000 Hz)":
+            print(color_graph[0])
+            color_graph = color_graph[0]
+        elif plot_name == "Alle Fische, niederfrequenter Stimulus (10 Hz)":
+            print(color_graph[1])
+            color_graph = color_graph[1]
+
+        else:
+            color_graph = "lightgrey"
+        ax.plot(time_list, line_calc, c=color_graph, linewidth=0.4)
 
         # summed axes
         m_summed.append(m)
@@ -143,12 +164,10 @@ def plot_all_together(percentages, all_fish, plot_name):
 
     line_calc = [m_median * x_l + b_median for x_l in time_list]  # loop is for multiplying lists
 
-    ax.plot(time_list, line_calc, "orange", linewidth=2)
-
-    
+   
     # 50% line
     ax.axhline(0.5, linewidth= 0.5, linestyle='--', color="grey")
-
+    ax.plot(time_list, line_calc, "orange", linewidth=2)
 
     ax.set_xlabel('Tage')
     ax.set_ylabel('richtige Entscheidungen in %')
@@ -156,7 +175,7 @@ def plot_all_together(percentages, all_fish, plot_name):
     ax.set_ylim([0, 1.05])
     ax.yaxis.set_ticks(np.arange(0, 1.05, step=0.1))
     #plt.title("%s" % plot_name)
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.svg" %plot_name)
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.svg" %plot_name)
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s.png" %plot_name)
 
     return plt
@@ -236,14 +255,15 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
 
         # lineare Regression
         m_1, b_1 = np.polyfit(x, y, 1)
-        ax.plot(x, m_1 * time_array + b_1, linewidth=1.5, c="orange")
+        
         m_1 = np.round(m_1, 3)
         b_1 = np.round(b_1, 3)
         print("Lineare Regression der einzel Plots:")
         print("%s: y = %s x + %s" % (fish, m_1, b_1))
 
-        # 50% line
+        # 50% line + liniar Reg.line
         ax.axhline(0.5, linewidth= 0.5, linestyle='--', color="grey")
+        ax.plot(x, m_1 * time_array + b_1, linewidth=1.5, c="orange")
 
         # Pearson for R & p-Value
         r, p = np.round(sc.stats.pearsonr(x,y), 4)
@@ -368,7 +388,14 @@ def plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe
     
     ax.set_xlabel('Tage')
     ax.set_ylabel('richtige Entscheidungen in %')
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/low_stim_sixer.svg")
+
+    if plot_name_single == ", niederfrequenter Stimulus (10 Hz)":
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/low_stim_sixer.svg")
+    elif plot_name_single == ", hochfrequenter Stimulus (1000 Hz)":
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/high_stim_sixer.svg")
+    else:
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/all_stim_sixer.svg")
+
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/%s %s.png" % (fish, plot_name_single))
     
     return plt
@@ -403,38 +430,36 @@ def high_data_use(training_high_data, all_fish, plot_name, plot_name_single, bin
     return percentages
 
 
-
 def boxplotting(data_high, data_low, data_mixed):
     high_test_perc = percentage_creation(data_high)
     low_test_perc = percentage_creation(data_low)
     mixed_test_perc = percentage_creation(data_mixed)
 
     yr_highness = []
+    only_06 = "n"
     for fish in high_test_perc:
-        if fish == "perc_2020albi06":# or fish == "perc_2020albi06": # can be skipped, if all fish should be included
-            yr_highness.extend(high_test_perc[fish])
-
+        # if fish == "perc_2020albi06":# or fish == "perc_2020albi06": # can be skipped, if all fish should be included
+        #     only_06 = "y" # only for the use of changing color and saving when only albi06 is used
+        yr_highness.extend(high_test_perc[fish])
 
     yr_lowness = []
     for fish in low_test_perc:
-        if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
-            yr_lowness.extend(low_test_perc[fish])
+        #if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
+        yr_lowness.extend(low_test_perc[fish])
 
     yr_mixedness = []
     for fish in mixed_test_perc:
-        if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
-            yr_mixedness.extend(mixed_test_perc[fish])
+        #if fish == "perc_2020albi06":# or fish == "perc_2020albi06":
+        yr_mixedness.extend(mixed_test_perc[fish])
 
     #yr_mixedness = np.array(yr_mixedness)
     #yr_mixedness = yr_mixedness[yr_mixedness > 0.3]
 
     data = [yr_highness, yr_lowness, yr_mixedness]
     fig, ax = plt.subplots(figsize=(10,8))
-    ax.axhline(0.5, linewidth= 0.5, linestyle='--', color="grey")
-    #ax.set_title('Vergleich der Stimuli im Testversuch')
-    ax.boxplot(data)
 
-    
+    #ax.set_title('Vergleich der Stimuli im Testversuch')
+
     # 50% line
     ax.axhline(0.5, linewidth= 0.5, linestyle='--', color="grey")
 
@@ -455,18 +480,28 @@ def boxplotting(data_high, data_low, data_mixed):
         print("Boxplot IQA = %s" % iqa)
 
     bp = ax.boxplot(data, vert=True, patch_artist=True)
-    colors = ['black','lightgrey', 'grey']
+    if only_06 == "y":
+        colors = ['darkmagenta', 'violet', 'fuchsia']
+    else:    
+        colors = ['black','lightgrey', 'grey']
+
     for patch, color in zip(bp['boxes'], colors):
-        patch.set_facecolor(color)
+        patch.set(facecolor='white', color = color)
+
     
     for patch, color in zip(bp['medians'], colors):
         patch.set_color('orange')
     
     plt.xticks([1, 2, 3], ['hoch', 'niedrig', 'gemischt'])
     ax.set_ylabel('richtige Entscheidungen in %')
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.png")
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch_nur_06.png")
+    
+    if only_06 == 'y':
+        #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch_nur_06.png")
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch_nur_06.svg")
+    else:
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.svg")
+        #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Stimuli_im_Testversuch.png")
+
 
     #ttest analysis for each combination
     t_h_l = sc.stats.ttest_ind(yr_highness, yr_lowness)
@@ -475,6 +510,7 @@ def boxplotting(data_high, data_low, data_mixed):
     print("T-test Ergebnisse für korrekte Entscheidungen: hoch + niedrig: %s, hoch + gemischt: %s, niedrig + gemischt: %s" %(t_h_l, t_h_m, t_l_m))
 
     return plt
+
 
 def boxplotting_for_singles (dataframe, tag):
     # universal plot variables
@@ -521,11 +557,11 @@ def boxplotting_for_singles (dataframe, tag):
     if tag == "hochfrequentem Stimulus (Testdaten)" or tag == "hochfrequentem Stimulus (Trainingsdaten)":
         for index, fish in enumerate(all_fish_ls):
             color_graph = locals()["a0%s_colors" % (index+1)]
-            colors.append(color_graph[1])
+            colors.append(color_graph[0])
     if tag == "niederfrequentem Stimulus (Testdaten)"or tag == "niederfrequentem Stimulus (Trainingsdaten)":
         for index, fish in enumerate(all_fish_ls):
             color_graph = locals()["a0%s_colors" % (index+1)]
-            colors.append(color_graph[0])
+            colors.append(color_graph[1])
     if tag == "gemischtem Stimulus (Testdaten)":
         for index, fish in enumerate(all_fish_ls):
             color_graph = locals()["a0%s_colors" % (index+1)]
@@ -533,7 +569,7 @@ def boxplotting_for_singles (dataframe, tag):
 
 
     for patch, colorus in zip(bp['boxes'], colors):
-        patch.set(facecolor="white", color=colorus)
+        patch.set(facecolor = 'white',color = colorus)
     
     for patch, colorus in zip(bp['medians'], colors):
         patch.set(color='orange')
@@ -545,7 +581,7 @@ def boxplotting_for_singles (dataframe, tag):
     plt.xticks([1, 2, 3, 4, 5, 6], ['albi01', 'albi02', 'albi03', 'albi04', 'albi05', 'albi06'])
 
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.png" %tag)
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.svg" %tag)
+    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Boxplots_%s.svg" %tag)
 
     return plt
 
@@ -555,44 +591,45 @@ def reaction_time_analysis(times, data, stim):
     high_react_ls = []
     low_react_ls = []
     mixed_react_ls = []
-
+    only_06 = 'n'
     for fish in data.columns:
-        if fish == "2020albi06":# or fish == "2020albi06": # can be skipped, if all fish should be included
-            for index in data.index:
-                if index == 0:  # for skipping the first testing day (no time data)
-                    continue
-                    # getting the data for one fish
-                curr_data = data[fish][index]
-                curr_times = times[fish][index]
-                curr_stim = stim[fish][index]
+        #if fish == "2020albi06":# or fish == "2020albi06": # can be skipped, if all fish should be included
+        #    only_06 = 'y'
+        for index in data.index:
+            if index == 0:  # for skipping the first testing day (no time data)
+                continue
+                # getting the data for one fish
+            curr_data = data[fish][index]
+            curr_times = times[fish][index]
+            curr_stim = stim[fish][index]
 
-                arr_data = np.array(curr_data)
-                arr_times = np.array(curr_times)
-                arr_stim = np.array(curr_stim)
+            arr_data = np.array(curr_data)
+            arr_times = np.array(curr_times)
+            arr_stim = np.array(curr_stim)
 
-                # high stim
-                high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
-                high_times = arr_times[arr_stim == "high"]
-                high_stim = arr_stim[arr_stim == "high"]
+            # high stim
+            high_data = arr_data[arr_stim == "high"]  # only the choices where the stim was high
+            high_times = arr_times[arr_stim == "high"]
+            high_stim = arr_stim[arr_stim == "high"]
 
-                right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
-                high_react_ls.extend(right_high_times)
+            right_high_times = high_times[high_data == 1]  # only the times where the fish choices where correct
+            high_react_ls.extend(right_high_times)
 
-                # low stim
-                low_data = arr_data[arr_stim == "low"]
-                low_times = arr_times[arr_stim == "low"]
-                low_stim = arr_stim[arr_stim == "low"]
+            # low stim
+            low_data = arr_data[arr_stim == "low"]
+            low_times = arr_times[arr_stim == "low"]
+            low_stim = arr_stim[arr_stim == "low"]
 
-                right_low_times = low_times[low_data == 1]
-                low_react_ls.extend(right_low_times)
+            right_low_times = low_times[low_data == 1]
+            low_react_ls.extend(right_low_times)
 
-                # mixed stim
-                mixed_data = arr_data[arr_stim == "mixed"]
-                mixed_times = arr_times[arr_stim == "mixed"]
-                mixed_stim = arr_stim[arr_stim == "mixed"]
+            # mixed stim
+            mixed_data = arr_data[arr_stim == "mixed"]
+            mixed_times = arr_times[arr_stim == "mixed"]
+            mixed_stim = arr_stim[arr_stim == "mixed"]
 
-                right_mixed_times = mixed_times[mixed_data == 1]
-                mixed_react_ls.extend(right_mixed_times)
+            right_mixed_times = mixed_times[mixed_data == 1]
+            mixed_react_ls.extend(right_mixed_times)
 
     data = [high_react_ls, low_react_ls, mixed_react_ls]
     fig, ax = plt.subplots(figsize=(10, 8))
@@ -616,9 +653,13 @@ def reaction_time_analysis(times, data, stim):
 
     bp = ax.boxplot(data, vert=True, patch_artist=True)
 
-    colors = ['black', 'lightgrey', 'grey']
+    if only_06 == "y":
+        colors = ['darkmagenta', 'violet', 'fuchsia']
+    else:    
+        colors = ['black','lightgrey', 'grey']
+
     for patch, color in zip(bp['boxes'], colors):
-        patch.set_facecolor(color)
+        patch.set(facecolor = 'white', color = color)
     
     for patch, color in zip(bp['medians'], colors):
         patch.set_color('orange')
@@ -630,8 +671,10 @@ def reaction_time_analysis(times, data, stim):
     t_l_m = sc.stats.ttest_ind(low_react_ls, mixed_react_ls)
     print("T-test Ergebnisse für Reaktionszeiten: hoch + niedrig: %s, hoch + gemischt: %s, niedrig + gemischt: %s" %(t_h_l, t_h_m, t_l_m))
 
-    plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch_nur_06.svg")
-    #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
+    if only_06 == 'y':
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch_nur_06.svg")
+    else:
+        plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.svg")
     #plt.savefig("/home/efish/PycharmProjects/philipp/figures/Vergleich_der_Reaktionszeiten_im_Testversuch.png")
 
     return plt

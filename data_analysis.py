@@ -47,13 +47,13 @@ plot_all_together(percentages, all_fish, plot_name)
 plt.show()
 #plt.close()
 """
-
+"""
 plot_name_single = ", hoch- und niederfrequente Stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
 plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
 plt.show()
 
-
+"""
 """
 # using only low/high data
 """
