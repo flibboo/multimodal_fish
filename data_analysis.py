@@ -52,8 +52,8 @@ plot_name_single = ", hoch- und niederfrequente Stimuli"
 tag = "use vertical lines" # this tag is for filtering out a graphic add, which we only need here
 plot_single(percentages, all_fish, plot_name_single, tag, binomial_dataframe_low, binomial_dataframe_high)
 plt.show()
-
 """
+
 """
 # using only low/high data
 """
@@ -61,48 +61,54 @@ plt.show()
 plot_name = "Alle Fische, niederfrequenter Stimulus (10 Hz)"
 plot_name_single = ", niederfrequenter Stimulus (10 Hz)"
 low_data_use(training_low_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
+print('----------------------------------------------------------------')
 
 tag = "niederfrequentem Stimulus (Trainingsdaten)"
 boxplotting_for_singles(training_low_data, tag)
 plt.show()
+print('----------------------------------------------------------------')
 
 plot_name = "Alle Fische, hochfrequenter Stimulus (1000 Hz)"
 plot_name_single = ", hochfrequenter Stimulus (1000 Hz)"
 high_data_use(training_high_data, all_fish, plot_name, plot_name_single, binomial_dataframe_low, binomial_dataframe_high)
+print('----------------------------------------------------------------')
 
 tag = "hochfrequentem Stimulus (Trainingsdaten)"
 boxplotting_for_singles(training_high_data, tag)
 plt.show()
+print('----------------------------------------------------------------')
 
 """
 # testing analysis
 """
+
 boxplotting(testing_high_data, testing_low_data, testing_mixed_data)
 plt.show()
-
+print('----------------------------------------------------------------')
 reaction_time_analysis(testing_react_times, testing_data, testing_stim_frame)
 plt.show()
-
+print('----------------------------------------------------------------')
 tag = "hochfrequentem Stimulus (Testdaten)"
 boxplotting_for_singles(testing_high_data, tag)
 plt.show()
-
+print('----------------------------------------------------------------')
 tag = "niederfrequentem Stimulus (Testdaten)"
 boxplotting_for_singles(testing_low_data, tag)
 plt.show()
-
+print('----------------------------------------------------------------')
 tag = "gemischtem Stimulus (Testdaten)"
 boxplotting_for_singles(testing_mixed_data, tag)
 plt.show()
-
+print('----------------------------------------------------------------')
 """
 # other statistics
 """
 diverse_statistics(testing_mixed_data, testing_high_data, testing_low_data)
+print('----------------------------------------------------------------')
 
 """
-"""
 # logistic regression -> ich bin leider eine Enttäuschung
+"""
 """
 # low data use
 plot_name_single = ", logistische Regression mit niederfrequentem Stimulus"
